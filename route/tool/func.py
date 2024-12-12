@@ -114,6 +114,24 @@ def do_db_set(db_set):
         for for_a in db_set:
             m_curs.execute('insert into temp (name, data) values (?, ?)', ['db_' + for_a, db_set[for_a]])
 
+class flask_data_or_variable:
+    def __init__(self, flask_data, var_dict):
+        if var_dict == {}:
+            self.data = flask_data
+            self.selected_flask = True
+        else:
+            self.data = var_dict
+            self.selected_flask = False
+
+    def get(self, dict_name, replace_data):
+        if self.selected_flask == True:
+            return self.data.get(dict_name, replace_data)
+        else:
+            if dict_name in self.data:
+                return self.data[dict_name]
+            else:
+                return replace_data
+
 def python_to_golang_sync(func_name, other_set = {}):
     with class_temp_db() as m_conn:
         m_curs = m_conn.cursor()

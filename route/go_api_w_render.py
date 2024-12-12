@@ -26,14 +26,17 @@ class api_w_render_include:
             else:
                 return slash_add + match[2]
 
-async def api_w_render(name = '', tool = ''):
+async def api_w_render(name = '', tool = '', request_method = '', request_data = {}):
     with get_db_connect() as conn:
         curs = conn.cursor()
 
-        if flask.request.method == 'POST':
-            name = flask.request.form.get('name', '')
-            data_org = flask.request.form.get('data', '')
-            data_option = flask.request.form.get('option', '')
+        flask_data = flask_data_or_variable(flask.request.form, request_data)
+        request_method = flask.request.method if request_method == '' else request_method
+
+        if request_method == 'POST':
+            name = flask_data.get('name', '')
+            data_org = flask_data.get('data', '')
+            data_option = flask_data.get('option', '')
 
             markup = ''
             if tool in ('', 'from', 'include'):
