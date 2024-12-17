@@ -1,6 +1,9 @@
 from .tool.func import *
 
-def view_w(name = 'Test', do_type = ''):
+from .go_api_w_raw import api_w_raw
+from .go_api_w_render import api_w_render
+
+async def view_w(name = 'Test', do_type = ''):
     with get_db_connect() as conn:
         curs = conn.cursor()
 
@@ -176,13 +179,17 @@ def view_w(name = 'Test', do_type = ''):
 
             name_view = name
 
-        end_data = '''
-            <div id="opennamu_preview_area"></div>
-            <textarea id="opennamu_editor_doc_name" style="display: none;">''' + html.escape(name) + '''</textarea>
-            <div id="opennamu_w_comment"></div>
-            <script defer src="/views/main_css/js/route/w.js''' + cache_v() + '''"></script>
-            <script>window.addEventListener("DOMContentLoaded", function() { opennamu_w("''' + ('from' if do_type == 'from' else '') + '''"); opennamu_w_page_view(); opennamu_w_comment(); });</script>
-        '''
+        doc_data = json.loads((await api_w_raw(name)).data)
+        if doc_data["response"] != "not exist":
+            render_data = json.loads((await api_w_render(name, request_method = 'POST', request_data = {
+                'name' : name,
+                'data' : doc_data["data"]
+            })).data)
+            end_data = render_data["data"] + '<script>document.addEventListener("DOMContentLoaded", function() {' + render_data["js_data"] + '});</script>'
+        else:
+            end_data = ''
+
+        
 
         curs.execute(db_change("select data from data where title = ?"), [name])
         data = curs.fetchall()

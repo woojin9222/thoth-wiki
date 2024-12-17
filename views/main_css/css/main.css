@@ -326,6 +326,11 @@
     border-left: 5px solid black;
 }
 
+/* math */
+.katex {
+    line-height: 0;
+}
+
 /* 취소선 */
 .opennamu_main s,
 .opennamu_main strike,
