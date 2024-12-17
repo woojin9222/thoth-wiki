@@ -38,3 +38,5 @@ openNAMU is protected by [BSD 3-Clause License](./LICNESE). Please refer to the 
  * Owner rights are granted to the first registor.
  * [Test Server](http://2du.pythonanywhere.com)
  * [Contributors](https://github.com/openNAMU/openNAMU/graphs/contributors)
+ * [Old History 1](https://github.com/openNAMU/openNAMU-Backup)
+ * [Old History 2](https://github.com/openNAMU/Discard-openNAMU-Legacy)

@@ -48,3 +48,5 @@
  * 첫 가입자에게 소유자 권한이 부여됩니다.
  * [테스트 서버](http://2du.pythonanywhere.com)
  * [기여자 목록](https://github.com/openNAMU/openNAMU/graphs/contributors)
+ * [예전 히스토리 1](https://github.com/openNAMU/openNAMU-Backup)
+ * [예전 히스토리 2](https://github.com/openNAMU/Discard-openNAMU-Legacy)
