@@ -21,7 +21,7 @@ function opennamu_do_insert_version(
             
             xhr_2.onreadystatechange = function() {
                 if(this.readyState === 4 && this.status === 200) {
-                    document.getElementById(dom_name_version_new).innerHTML += JSON.parse(this.responseText)['beta']['r_ver'];
+                    document.getElementById(dom_name_version_new).innerHTML += JSON.parse(this.responseText)['r_ver'];
                 }
             }
         }
