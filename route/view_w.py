@@ -2,6 +2,7 @@ from .tool.func import *
 
 from .go_api_w_raw import api_w_raw
 from .go_api_w_render import api_w_render
+from .go_api_w_page_view import api_w_page_view
 
 async def view_w(name = 'Test', do_type = ''):
     with get_db_connect() as conn:
@@ -189,7 +190,7 @@ async def view_w(name = 'Test', do_type = ''):
         else:
             end_data = ''
 
-        
+        await api_w_page_view(name)
 
         curs.execute(db_change("select data from data where title = ?"), [name])
         data = curs.fetchall()
