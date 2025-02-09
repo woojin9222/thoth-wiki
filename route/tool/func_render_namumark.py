@@ -1888,7 +1888,7 @@ class class_do_render_namumark:
                             self.render_data = re.sub(middle_regex, lambda x : middle_data_org, self.render_data, 1)
                             continue
 
-                        wiki_data = re.sub(r'^#!wiki +', '', middle_data)
+                        wiki_data = re.sub(r'^#!wiki *', '', middle_data)
 
                         wiki_regex = re.compile('^(?:(?:style=(&quot;(?:(?:(?!&quot;).)*)&quot;|&#x27;(?:(?:(?!&#x27;).)*)&#x27;)))(?:\n| +)', re.I)
                         wiki_dark_regex = re.compile('^(?:(?:dark-style=(&quot;(?:(?:(?!&quot;).)*)&quot;|&#x27;(?:(?:(?!&#x27;).)*)&#x27;)))(?:\n| +)', re.I)
