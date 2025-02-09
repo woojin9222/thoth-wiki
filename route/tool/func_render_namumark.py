@@ -1707,7 +1707,13 @@ class class_do_render_namumark:
                     else:
                         do_any_thing += '&lt;' + table_parameter + '&gt;'
                 elif len(table_parameter_split) == 1:
-                    if table_parameter == 'nopad':
+                    if table_parameter == 'keepall':
+                        table_parameter_all['td'] += 'word-break: keep-all !important;'
+                    elif table_parameter == 'rowkeepall':
+                        table_parameter_all['tr'] += 'word-break: keep-all !important;'
+                    elif table_parameter == 'colkeepall':
+                        table_parameter_all['col'] += 'word-break: keep-all !important;'
+                    elif table_parameter == 'nopad':
                         table_parameter_all['td'] += 'padding: 0 !important;'
                     elif re.search(r'^-[0-9]+$', table_parameter):
                         table_colspan_auto = 0
@@ -2154,6 +2160,8 @@ class class_do_render_namumark:
                 data = re.sub(inter_data_regex, self.replace_sub, data)
                 
                 data = self.do_inter_render(data, self.doc_set['doc_include'] + 'opennamu_inter_render_' + str(self.inter_count))
+                data = re.sub(r'\|\|', '<no_td>', data)
+                
                 self.inter_count += 1
 
                 return data

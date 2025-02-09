@@ -1585,6 +1585,7 @@ def render_set(conn, doc_name = '', doc_data = '', data_type = 'view', markup = 
 
                 .opennamu_render_complete td {
                     padding: 5px 10px !important;
+                    word-break: break-all;
                 }
 
                 .opennamu_render_complete summary {
