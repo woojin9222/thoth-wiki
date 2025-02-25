@@ -78,6 +78,7 @@ from route.main_setting_sitemap import main_setting_sitemap
 from route.main_setting_sitemap_set import main_setting_sitemap_set
 from route.main_setting_skin_set import main_setting_skin_set
 from route.main_setting_top_menu import main_setting_top_menu
+from route.main_setting_email_test import main_setting_email_test
 
 from route.main_sys_restart import main_sys_restart
 from route.main_sys_shutdown import main_sys_shutdown
@@ -185,6 +186,7 @@ from route.go_api_func_sha224 import api_func_sha224
 from route.go_api_func_ip import api_func_ip
 from route.go_api_func_ip_menu import api_func_ip_menu
 from route.go_api_func_auth import api_func_auth
+from route.go_api_func_email import api_func_email
 
 from route.go_api_func_search import api_func_search
 
