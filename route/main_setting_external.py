@@ -98,6 +98,8 @@ def main_setting_external():
                         <h3>''' + get_lang(conn, 'smtp_setting') + '''</h3>
                         <a href="https://support.google.com/mail/answer/7126229">(Google)</a>
                         <hr class="main_hr">
+                        <a href="/setting/email_send">(''' + get_lang(conn, 'test') + ''')</a>
+                        <hr class="main_hr">
 
                         <span>''' + get_lang(conn, 'smtp_server') + '''</span>
                         <hr class="main_hr">

@@ -181,7 +181,7 @@ async def view_w(name = 'Test', do_type = ''):
             name_view = name
 
         doc_data = json.loads((await api_w_raw(name)).data)
-        if doc_data["response"] != "not exist":
+        if doc_data["response"] == "ok":
             render_data = json.loads((await api_w_render(name, request_method = 'POST', request_data = {
                 'name' : name,
                 'data' : doc_data["data"]

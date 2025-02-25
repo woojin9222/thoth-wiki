@@ -1243,7 +1243,7 @@ def skin_check(conn, set_n = 0):
         return skin
     
 def cache_v():
-    return '.cache_v283'
+    return '.cache_v284'
 
 def wiki_css(data):
     with class_temp_db() as m_conn:
@@ -1585,6 +1585,7 @@ def render_set(conn, doc_name = '', doc_data = '', data_type = 'view', markup = 
 
                 .opennamu_render_complete td {
                     padding: 5px 10px !important;
+                    word-break: break-all;
                 }
 
                 .opennamu_render_complete summary {
