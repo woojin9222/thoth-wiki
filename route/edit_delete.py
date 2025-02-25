@@ -59,7 +59,7 @@ def edit_delete(name):
                     <form method="post">
                         <input placeholder="''' + get_lang(conn, 'why') + '''" name="send">
                         <hr class="main_hr">
-                        ''' + captcha_get(conn) + ip_warning(conn) + get_edit_text_bottom_check_box(conn) + get_edit_text_bottom(conn)  + '''
+                        ''' + captcha_get(conn) + ip_warning(conn) + get_edit_text_bottom_check_box(conn) + get_edit_text_bottom(conn, 'delete')  + '''
                         <button type="submit">''' + get_lang(conn, 'delete') + '''</button>
                     </form>
                 ''',

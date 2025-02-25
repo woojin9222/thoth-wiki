@@ -373,7 +373,7 @@ def edit(name = 'Test', section = 0, do_type = ''):
                         <input placeholder="''' + get_lang(conn, 'why') + '''" name="send">
                         <hr class="main_hr">
                         
-                        ''' + edit_editor(conn, ip, data_section, addon = get_edit_text_bottom_check_box(conn) + get_edit_text_bottom(conn) , name = name) + '''
+                        ''' + edit_editor(conn, ip, data_section, addon = get_edit_text_bottom_check_box(conn) + get_edit_text_bottom(conn, 'edit') , name = name) + '''
                     </form>
                 ''',
                 menu = [

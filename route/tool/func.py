@@ -1982,18 +1982,29 @@ def ip_pas(raw_ip):
     return data["data"][raw_ip] if return_data == 1 else data["data"]
         
 # Func-edit
-def get_edit_text_bottom(conn) :
+def get_edit_text_bottom(conn, tool = '') :
     curs = conn.cursor()
     
     b_text = ''
     
     curs.execute(db_change('select data from other where name = "edit_bottom_text"'))
-    db_data= curs.fetchall()
+    db_data = curs.fetchall()
     if db_data and db_data[0][0] != '':
-        b_text = '' + \
-            db_data[0][0] + \
-            '<hr class="main_hr">' + \
-        ''
+        b_text = db_data[0][0] + '<hr class="main_hr">'
+
+    if tool != '':
+        if tool == 'edit':
+            curs.execute(db_change('select data from other where name = "edit_only_bottom_text"'))
+        elif tool == 'move':
+            curs.execute(db_change('select data from other where name = "move_bottom_text"'))
+        elif tool == 'delete':
+            curs.execute(db_change('select data from other where name = "delete_bottom_text"'))
+        else:
+            curs.execute(db_change('select data from other where name = "revert_bottom_text"'))
+
+        db_data = curs.fetchall()
+        if db_data and db_data[0][0] != '':
+            b_text = db_data[0][0] + '<hr class="main_hr">'
 
     return b_text
 

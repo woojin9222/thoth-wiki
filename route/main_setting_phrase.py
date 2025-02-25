@@ -157,19 +157,19 @@ def main_setting_phrase():
                         <h3>''' + get_lang(conn, 'template_var_3') + ''' (''' + get_lang(conn, 'default') + ''' : ''' + get_lang(conn, 'bottom') + ''') (HTML)</h3>
                         <textarea class="opennamu_textarea_100" name="''' + i_list[29] + '''">''' + html.escape(d_list[29]) + '''</textarea>
 
-                        <h3>''' + get_lang(conn, 'edit_bottom_text') + ''' (HTML)</h3>
+                        <h2>''' + get_lang(conn, 'edit_bottom_text') + ''' (HTML)</h2>
                         <textarea class="opennamu_textarea_100" name="''' + i_list[2] + '''">''' + html.escape(d_list[2]) + '''</textarea>
 
-                        <h2>''' + get_lang(conn, 'edit_only_bottom_text') + ''' (HTML)</h2>
+                        <h3>''' + get_lang(conn, 'edit_only_bottom_text') + ''' (HTML)</h3>
                         <textarea class="opennamu_textarea_100" name="''' + i_list[30] + '''">''' + html.escape(d_list[30]) + '''</textarea>
 
-                        <h3>''' + get_lang(conn, 'edit_bottom_text') + ''' (HTML)</h3>
+                        <h3>''' + get_lang(conn, 'move_bottom_text') + ''' (HTML)</h3>
                         <textarea class="opennamu_textarea_100" name="''' + i_list[31] + '''">''' + html.escape(d_list[31]) + '''</textarea>
 
-                        <h3>''' + get_lang(conn, 'edit_bottom_text') + ''' (HTML)</h3>
+                        <h3>''' + get_lang(conn, 'delete_bottom_text') + ''' (HTML)</h3>
                         <textarea class="opennamu_textarea_100" name="''' + i_list[32] + '''">''' + html.escape(d_list[32]) + '''</textarea>
 
-                        <h3>''' + get_lang(conn, 'edit_bottom_text') + ''' (HTML)</h3>
+                        <h3>''' + get_lang(conn, 'revert_bottom_text') + ''' (HTML)</h3>
                         <textarea class="opennamu_textarea_100" name="''' + i_list[33] + '''">''' + html.escape(d_list[33]) + '''</textarea>
 
                         <hr class="main_hr">

@@ -256,7 +256,7 @@ def edit_move(name):
                             '''
                         ) if owner_auth == 1 else '') + '''
 
-                        ''' + captcha_get(conn) + ip_warning(conn) + get_edit_text_bottom_check_box(conn) + get_edit_text_bottom(conn)  + '''
+                        ''' + captcha_get(conn) + ip_warning(conn) + get_edit_text_bottom_check_box(conn) + get_edit_text_bottom(conn, 'move')  + '''
                         
                         <button type="submit">''' + get_lang(conn, 'move') + '''</button>
                     </form>
