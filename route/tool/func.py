@@ -145,8 +145,14 @@ def python_to_golang_sync(func_name, other_set = {}):
         db_data = m_curs.fetchall()
         db_data = db_data[0][0] if db_data else "3001"
     
+        headers = {}
+        if "Cookie" in flask.request.headers:
+            headers["Cookie"] = flask.request.headers["Cookie"]
+
+        headers["X-Forwarded-For"] = ip_check()
+
         while 1:
-            res = requests.post('http://localhost:' + db_data + '/', data = other_set)
+            res = requests.post('http://localhost:' + db_data + '/', data = other_set, headers = headers)
             data = res.text
 
             if "error" == data:
@@ -166,10 +172,16 @@ async def python_to_golang(func_name, other_set = {}):
         m_curs.execute('select data from temp where name = "setup_golang_port"')
         db_data = m_curs.fetchall()
         db_data = db_data[0][0] if db_data else "3001"
+
+        headers = {}
+        if "Cookie" in flask.request.headers:
+            headers["Cookie"] = flask.request.headers["Cookie"]
+
+        headers["X-Forwarded-For"] = ip_check()
     
         async with aiohttp.ClientSession() as session:
             while 1:
-                async with session.post('http://localhost:' + db_data + '/', data = other_set) as res:
+                async with session.post('http://localhost:' + db_data + '/', data = other_set, headers = headers) as res:
                     data = await res.text()
 
                     if "error" == data:
