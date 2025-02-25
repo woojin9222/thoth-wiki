@@ -1,6 +1,8 @@
 from .tool.func import *
 
-def view_w_raw(name = '', rev = '', doc_acl = ''):
+from .go_api_w_raw import api_w_raw
+
+async def view_w_raw(name = '', rev = '', doc_acl = ''):
     with get_db_connect() as conn:
         rev_str = str(rev)
 
@@ -12,16 +14,16 @@ def view_w_raw(name = '', rev = '', doc_acl = ''):
         else:
             menu = [['w/' + url_pas(name), get_lang(conn, 'return')]]
 
+        data = json.loads((await api_w_raw(name, rev)).data)
+        if data["response"] == "ok":
+            data_in = data["data"]
+        else:
+            data_in = ''
+
         p_data = ''
         p_data += '''
             <div id="opennamu_preview_area">
-                <script defer src="/views/main_css/js/route/w_raw.js''' + cache_v() + '''"></script>
-                <textarea id="opennamu_editor_doc_name" style="display: none;">''' + html.escape(name) + '''</textarea>
-                <textarea id="opennamu_editor_rev" style="display: none;">''' + rev_str + '''</textarea>
-                <button id="opennamu_preview_button" type="button" onclick="opennamu_w_raw_preview();">''' + get_lang(conn, 'preview') + '''</button>
-                <hr class="main_hr">
-                <textarea readonly id="opennamu_edit_textarea" class="opennamu_textarea_500"></textarea>
-                <script>window.addEventListener("DOMContentLoaded", function() { opennamu_w_raw(); });</script>
+                <textarea readonly id="opennamu_edit_textarea" class="opennamu_textarea_500">''' + html.escape(data_in) + '''</textarea>
             </div>
         '''
         
