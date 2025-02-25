@@ -163,7 +163,7 @@ class class_do_render_namumark:
             if data == '':
                 data += '<div class="opennamu_footnote">'
             else:
-                data += '<br>'
+                data += '<hr class="main_hr">'
 
             if len(self.data_footnote[for_a]['list']) > 1:
                 data += '(' + for_a + ') '
