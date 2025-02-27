@@ -138,22 +138,23 @@ def python_to_golang_sync(func_name, other_set = {}):
         
         other_set = {
             "url" : func_name,
-            "data" : json.dumps(other_set)
+            "data" : json.dumps(other_set),
+            "session" : json.dumps(dict(flask.session))
         }
-    
-        m_curs.execute('select data from temp where name = "setup_golang_port"')
-        db_data = m_curs.fetchall()
-        db_data = db_data[0][0] if db_data else "3001"
-    
+
         if "Cookie" in flask.request.headers:
             other_set["cookie"] = flask.request.headers["Cookie"]
         else:
             other_set["cookie"] = ""
 
         other_set["ip"] = ip_check()
+    
+        m_curs.execute('select data from temp where name = "setup_golang_port"')
+        db_data = m_curs.fetchall()
+        db_data = db_data[0][0] if db_data else "3001"
 
         while 1:
-            res = requests.post('http://localhost:' + db_data + '/', data = other_set, headers = headers)
+            res = requests.post('http://localhost:' + db_data + '/', data = json.dumps(other_set))
             data = res.text
 
             if "error" == data:
@@ -167,19 +168,20 @@ async def python_to_golang(func_name, other_set = {}):
     
         other_set = {
             "url" : func_name,
-            "data" : json.dumps(other_set)
+            "data" : json.dumps(other_set),
+            "session" : json.dumps(dict(flask.session))
         }
     
-        m_curs.execute('select data from temp where name = "setup_golang_port"')
-        db_data = m_curs.fetchall()
-        db_data = db_data[0][0] if db_data else "3001"
-
         if "Cookie" in flask.request.headers:
             other_set["cookie"] = flask.request.headers["Cookie"]
         else:
             other_set["cookie"] = ""
 
         other_set["ip"] = ip_check()
+
+        m_curs.execute('select data from temp where name = "setup_golang_port"')
+        db_data = m_curs.fetchall()
+        db_data = db_data[0][0] if db_data else "3001"
     
         async with aiohttp.ClientSession() as session:
             while 1:
