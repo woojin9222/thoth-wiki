@@ -136,20 +136,21 @@ def python_to_golang_sync(func_name, other_set = {}):
     with class_temp_db() as m_conn:
         m_curs = m_conn.cursor()
         
-        if other_set == {}:
-            other_set = func_name + ' {}'
-        else:
-            other_set = func_name + ' ' + json.dumps(other_set)
+        other_set = {
+            "url" : func_name,
+            "data" : json.dumps(other_set)
+        }
     
         m_curs.execute('select data from temp where name = "setup_golang_port"')
         db_data = m_curs.fetchall()
         db_data = db_data[0][0] if db_data else "3001"
     
-        headers = {}
         if "Cookie" in flask.request.headers:
-            headers["Cookie"] = flask.request.headers["Cookie"]
+            other_set["cookie"] = flask.request.headers["Cookie"]
+        else:
+            other_set["cookie"] = ""
 
-        headers["X-Forwarded-For"] = ip_check()
+        other_set["ip"] = ip_check()
 
         while 1:
             res = requests.post('http://localhost:' + db_data + '/', data = other_set, headers = headers)
@@ -164,24 +165,25 @@ async def python_to_golang(func_name, other_set = {}):
     with class_temp_db() as m_conn:
         m_curs = m_conn.cursor()
     
-        if other_set == {}:
-            other_set = func_name + ' {}'
-        else:
-            other_set = func_name + ' ' + json.dumps(other_set)
+        other_set = {
+            "url" : func_name,
+            "data" : json.dumps(other_set)
+        }
     
         m_curs.execute('select data from temp where name = "setup_golang_port"')
         db_data = m_curs.fetchall()
         db_data = db_data[0][0] if db_data else "3001"
 
-        headers = {}
         if "Cookie" in flask.request.headers:
-            headers["Cookie"] = flask.request.headers["Cookie"]
+            other_set["cookie"] = flask.request.headers["Cookie"]
+        else:
+            other_set["cookie"] = ""
 
-        headers["X-Forwarded-For"] = ip_check()
+        other_set["ip"] = ip_check()
     
         async with aiohttp.ClientSession() as session:
             while 1:
-                async with session.post('http://localhost:' + db_data + '/', data = other_set, headers = headers) as res:
+                async with session.post('http://localhost:' + db_data + '/', data = json.dumps(other_set)) as res:
                     data = await res.text()
 
                     if "error" == data:
