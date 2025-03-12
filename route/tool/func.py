@@ -163,7 +163,6 @@ def python_to_golang_sync(func_name, other_set = {}):
             res = requests.post('http://localhost:' + db_data + '/', data = json.dumps(other_set))
             data = res.text
 
-            print(data)
             if "error" == data:
                 raise
             else:
