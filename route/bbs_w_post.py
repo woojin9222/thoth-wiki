@@ -14,7 +14,7 @@ async def bbs_w_post_comment(conn, user_id, sub_code, comment_num, bbs_num_str, 
     comment_count = 0
     comment_add_count = 0
 
-    thread_data = orjson.loads((await api_bbs_w_comment(sub_code)).get_data(as_text = True))
+    thread_data = await api_bbs_w_comment(sub_code)
 
     for temp_dict in thread_data:
         if temp_dict['comment_user_id'] != '':
