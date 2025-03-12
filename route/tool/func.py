@@ -138,16 +138,22 @@ def python_to_golang_sync(func_name, other_set = {}):
         
         other_set = {
             "url" : func_name,
-            "data" : json.dumps(other_set),
-            "session" : json.dumps(dict(flask.session))
+            "data" : json.dumps(other_set)
         }
 
-        if "Cookie" in flask.request.headers:
-            other_set["cookie"] = flask.request.headers["Cookie"]
-        else:
-            other_set["cookie"] = ""
+        if flask.has_request_context():
+            other_set["session"] = json.dumps(dict(flask.session))
+    
+            if "Cookie" in flask.request.headers:
+                other_set["cookie"] = flask.request.headers["Cookie"]
+            else:
+                other_set["cookie"] = ""
 
-        other_set["ip"] = ip_check()
+            other_set["ip"] = ip_check()
+        else:
+            other_set["session"] = "{}"
+            other_set["cookie"] = ""
+            other_set["ip"] = "127.0.0.1"
     
         m_curs.execute('select data from temp where name = "setup_golang_port"')
         db_data = m_curs.fetchall()
@@ -168,16 +174,22 @@ async def python_to_golang(func_name, other_set = {}):
     
         other_set = {
             "url" : func_name,
-            "data" : json.dumps(other_set),
-            "session" : json.dumps(dict(flask.session))
+            "data" : json.dumps(other_set)
         }
-    
-        if "Cookie" in flask.request.headers:
-            other_set["cookie"] = flask.request.headers["Cookie"]
-        else:
-            other_set["cookie"] = ""
 
-        other_set["ip"] = ip_check()
+        if flask.has_request_context():
+            other_set["session"] = json.dumps(dict(flask.session))
+    
+            if "Cookie" in flask.request.headers:
+                other_set["cookie"] = flask.request.headers["Cookie"]
+            else:
+                other_set["cookie"] = ""
+
+            other_set["ip"] = ip_check()
+        else:
+            other_set["session"] = "{}"
+            other_set["cookie"] = ""
+            other_set["ip"] = "127.0.0.1"
 
         m_curs.execute('select data from temp where name = "setup_golang_port"')
         db_data = m_curs.fetchall()
