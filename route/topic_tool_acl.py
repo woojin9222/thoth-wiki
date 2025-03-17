@@ -1,6 +1,6 @@
 from .tool.func import *
 
-def topic_tool_acl(topic_num = 1):
+async def topic_tool_acl(topic_num = 1):
     with get_db_connect() as conn:
         curs = conn.cursor()
 
@@ -55,7 +55,7 @@ def topic_tool_acl(topic_num = 1):
 
             return redirect(conn, '/thread/' + topic_num)
         else:
-            acl_list = get_acl_list()
+            acl_list = await get_acl_list()
             acl_html_list = ''
             acl_html_list_view = ''
 

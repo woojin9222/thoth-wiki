@@ -25,7 +25,7 @@ def view_set_markup(conn, document_name = '', markup = '', addon = '', disable =
 
     return markup_html
 
-def view_set(name = 'Test', multiple = False):
+async def view_set(name = 'Test', multiple = False):
     with get_db_connect() as conn:
         curs = conn.cursor()
 
@@ -144,7 +144,7 @@ def view_set(name = 'Test', multiple = False):
             return redirect(conn, '/acl/' + url_pas(name))
         else:
             data = '<h2>' + get_lang(conn, 'acl') + '</h2>'
-            acl_list = get_acl_list()
+            acl_list = await get_acl_list()
             acl_get_list = [
                 [get_lang(conn, 'view_acl'), 'view', '3'],
                 [get_lang(conn, 'document_acl'), 'decu', '4'],

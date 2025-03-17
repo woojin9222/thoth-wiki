@@ -107,7 +107,7 @@ async def bbs_w_edit(bbs_num = '', post_num = '', comment_num = ''):
                 data = temp_dict['data']
 
             acl_div = ['' for _ in range(0, len(i_list))]
-            acl_list = get_acl_list()
+            acl_list = await get_acl_list()
             for for_a in range(0, len(i_list)):
                 for data_list in acl_list:
                     acl_div[for_a] += '<option value="' + data_list + '">' + (data_list if data_list != '' else 'normal') + '</option>'

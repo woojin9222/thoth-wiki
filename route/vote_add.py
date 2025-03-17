@@ -1,6 +1,6 @@
 from .tool.func import *
 
-def vote_add():
+async def vote_add():
     with get_db_connect() as conn:
         curs = conn.cursor()
 
@@ -46,7 +46,7 @@ def vote_add():
             return redirect(conn, '/vote')
         else:
             acl_data = '<select name="acl_select">'
-            acl_list = get_acl_list()
+            acl_list = await get_acl_list()
             for data_list in acl_list:
                 acl_data += '<option value="' + data_list + '">' + (data_list if data_list != '' else 'normal') + '</option>'
 

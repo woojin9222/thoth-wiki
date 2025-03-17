@@ -1,6 +1,6 @@
 from .tool.func import *
 
-def filter_all_add(tool, name = None):
+async def filter_all_add(tool, name = None):
     with get_db_connect() as conn:
         curs = conn.cursor()
 
@@ -208,7 +208,7 @@ def filter_all_add(tool, name = None):
                     '<input value="" type="text" name="max_file_size">' + \
                 ''
             elif tool == 'document':
-                acl_list = get_acl_list()
+                acl_list = await get_acl_list()
                 
                 curs.execute(db_change("select plus, plus_t from html_filter where html = ? and kind = 'document'"), [name])
                 db_data = curs.fetchall()
