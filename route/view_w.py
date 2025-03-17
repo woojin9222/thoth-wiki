@@ -180,12 +180,13 @@ async def view_w(name = 'Test', do_type = ''):
 
             name_view = name
 
-        doc_data = json.loads((await api_w_raw(name)).data)
+        doc_data = await api_w_raw(name)
+        print(doc_data)
         if doc_data["response"] == "ok":
-            render_data = json.loads((await api_w_render(name, request_method = 'POST', request_data = {
+            render_data = await api_w_render(name, request_method = 'POST', request_data = {
                 'name' : name,
                 'data' : doc_data["data"]
-            })).data)
+            })
             end_data = render_data["data"] + '<script>document.addEventListener("DOMContentLoaded", function() {' + render_data["js_data"] + '});</script>'
         else:
             end_data = ''

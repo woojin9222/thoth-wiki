@@ -161,7 +161,7 @@ def python_to_golang_sync(func_name, other_set = {}):
 
         while 1:
             res = requests.post('http://localhost:' + db_data + '/', data = json.dumps(other_set))
-            data = res.text
+            data = res.json()
 
             if "error" == data:
                 raise
@@ -198,7 +198,7 @@ async def python_to_golang(func_name, other_set = {}):
         async with aiohttp.ClientSession() as session:
             while 1:
                 async with session.post('http://localhost:' + db_data + '/', data = json.dumps(other_set)) as res:
-                    data = await res.text()
+                    data = await res.json()
 
                     if "error" == data:
                         raise

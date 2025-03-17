@@ -11,6 +11,9 @@ async def api_func_email():
         other_set["title"] = flask.request.form.get('title', '')
         other_set["data"] = flask.request.form.get('data', '')
 
-        return flask.Response(response = (await python_to_golang(func_name, other_set)), status = 200, mimetype = 'application/json')
+        return await python_to_golang(func_name, other_set)
     else:
-        return flask.jsonify({}) 
+        return {}
+
+async def api_func_email_exter():
+    return flask.Response(response = await api_func_email(), status = 200, mimetype = 'application/json')

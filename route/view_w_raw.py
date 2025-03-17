@@ -14,7 +14,7 @@ async def view_w_raw(name = '', rev = '', doc_acl = ''):
         else:
             menu = [['w/' + url_pas(name), get_lang(conn, 'return')]]
 
-        data = json.loads((await api_w_raw(name, rev)).data)
+        data = await api_w_raw(name, rev)
         if data["response"] == "ok":
             data_in = data["data"]
         else:

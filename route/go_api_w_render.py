@@ -81,16 +81,19 @@ async def api_w_render(name = '', tool = '', request_method = '', request_data =
                     data_type = data_type
                 )
 
-                return flask.jsonify({
+                return {
                     "data" : data_pas[0], 
                     "js_data" : data_pas[1]
-                })
+                }
             else:
                 other_set = {}
                 other_set["doc_name"] = name
                 other_set["render_type"] = data_type
                 other_set["data"] = data_org
 
-                return flask.Response(response = (await python_to_golang(sys._getframe().f_code.co_name, other_set)), status = 200, mimetype = 'application/json')
+                return await python_to_golang(sys._getframe().f_code.co_name, other_set)
         else:
-            return flask.jsonify({})
+            return {}
+
+async def api_w_render_exter(name = '', tool = '', request_method = '', request_data = {}):
+    return flask.Response(response = await api_w_render(name, tool, request_method, request_data), status = 200, mimetype = 'application/json')

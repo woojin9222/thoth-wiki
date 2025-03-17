@@ -8,7 +8,7 @@ async def main_setting_email_test():
             return re_error(conn, 0)
         
         if flask.request.method == 'POST':
-            render_data = json.loads((await api_func_email()).data)
+            render_data = await api_func_email()
             if render_data["response"] == "ok":
                 data = get_lang(conn, "ok")
             else:
