@@ -69,7 +69,7 @@ async def bbs_w_post(bbs_num = '', post_num = ''):
         bbs_comment_acl = acl_check(bbs_num_str, 'bbs_comment')
         ip = ip_check()
 
-        temp_dict = orjson.loads(api_bbs_w(bbs_num_str + '-' + post_num_str).data)
+        temp_dict = await api_bbs_w(bbs_num_str + '-' + post_num_str)
         if temp_dict == {}:
             return redirect(conn, '/bbs/main')
         

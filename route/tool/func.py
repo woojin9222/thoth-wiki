@@ -132,42 +132,6 @@ class flask_data_or_variable:
             else:
                 return replace_data
 
-def python_to_golang_sync(func_name, other_set = {}):
-    with class_temp_db() as m_conn:
-        m_curs = m_conn.cursor()
-        
-        other_set = {
-            "url" : func_name,
-            "data" : json.dumps(other_set)
-        }
-
-        if flask.has_request_context():
-            other_set["session"] = json.dumps(dict(flask.session))
-    
-            if "Cookie" in flask.request.headers:
-                other_set["cookie"] = flask.request.headers["Cookie"]
-            else:
-                other_set["cookie"] = ""
-
-            other_set["ip"] = ip_check()
-        else:
-            other_set["session"] = "{}"
-            other_set["cookie"] = ""
-            other_set["ip"] = "127.0.0.1"
-    
-        m_curs.execute('select data from temp where name = "setup_golang_port"')
-        db_data = m_curs.fetchall()
-        db_data = db_data[0][0] if db_data else "3001"
-
-        while 1:
-            res = requests.post('http://localhost:' + db_data + '/', data = json.dumps(other_set))
-            data = res.json()
-
-            if "error" == data:
-                raise
-            else:
-                return data
-
 async def python_to_golang(func_name, other_set = {}):
     with class_temp_db() as m_conn:
         m_curs = m_conn.cursor()
@@ -969,15 +933,14 @@ def redirect(conn, data = '/'):
     return flask.redirect(load_domain(conn, 'full') + data)
     
 # Golang 의존
-def get_acl_list(type_data = 'normal'):
+async def get_acl_list(type_data = 'normal'):
     if type_data == 'user':
         type_data = 'user_document'
 
     other_set = {}
     other_set['type'] = type_data
 
-    data_str = python_to_golang_sync('api_list_acl', other_set)
-    data = orjson.loads(data_str)
+    data = await python_to_golang('api_list_acl', other_set)
 
     return data["data"]
 
@@ -1953,7 +1916,7 @@ def level_check(conn, ip = ''):
 
     return [level, exp, max_exp]
 
-def acl_check(name = '', tool = '', topic_num = '', ip = '', memo = ''):
+async def acl_check(name = '', tool = '', topic_num = '', ip = '', memo = ''):
     ip = ip_check() if ip == '' else ip
 
     other_set = {}
@@ -1962,8 +1925,7 @@ def acl_check(name = '', tool = '', topic_num = '', ip = '', memo = ''):
     other_set['topic_number'] = topic_num
     other_set['tool'] = tool
 
-    data_str = python_to_golang_sync('api_func_acl', other_set)
-    data = orjson.loads(data_str)
+    data = await python_to_golang('api_func_acl', other_set)
 
     result = 0 if data["data"] else 1
 
@@ -1972,11 +1934,11 @@ def acl_check(name = '', tool = '', topic_num = '', ip = '', memo = ''):
         other_set['ip'] = ip
         other_set['what'] = memo
 
-        python_to_golang_sync('api_func_auth_post', other_set)
+        await python_to_golang('api_func_auth_post', other_set)
 
     return result
 
-def ban_check(ip = None, tool = ''):
+async def ban_check(ip = None, tool = ''):
     ip = ip_check() if not ip else ip
     tool = '' if not tool else tool
 
@@ -1984,13 +1946,12 @@ def ban_check(ip = None, tool = ''):
     other_set['ip'] = ip
     other_set['type'] = tool
 
-    data_str = python_to_golang_sync('api_func_ban', other_set)
-    data = orjson.loads(data_str)
+    data = await python_to_golang('api_func_ban', other_set)
     data["ban"] = 1 if data["ban"] == "true" else 0
 
     return [data["ban"], data["ban_type"]]
 
-def ip_pas(raw_ip):
+async def ip_pas(raw_ip):
     other_set = {}
     other_set["ip"] = ip_check()
     
@@ -2004,9 +1965,7 @@ def ip_pas(raw_ip):
     for for_a in range(1, len(get_ip) + 1):
         other_set["data_" + str(for_a)] = get_ip[for_a - 1]
 
-    data_str = python_to_golang_sync('api_func_ip_post', other_set)
-    data = orjson.loads(data_str)
-
+    data = await python_to_golang('api_func_ip_post', other_set)
     return data["data"][raw_ip] if return_data == 1 else data["data"]
         
 # Func-edit
@@ -2205,13 +2164,13 @@ def do_reload_recent_thread(conn, topic_num, date, name = None, sub = None):
     else:
         curs.execute(db_change("insert into rd (title, sub, code, date, band, stop, agree, acl) values (?, ?, ?, ?, '', '', '', '')"), [name, sub, topic_num, date])
 
-def add_alarm(to_user, from_user, context):
+async def add_alarm(to_user, from_user, context):
     other_set = {}
     other_set['to'] = to_user
     other_set['from'] = from_user
     other_set['data'] = context
 
-    python_to_golang_sync('api_func_alarm_post', other_set)
+    await python_to_golang('api_func_alarm_post', other_set)
 
 def add_user(conn, user_name, user_pw, user_email = '', user_encode = ''):
     curs = conn.cursor()

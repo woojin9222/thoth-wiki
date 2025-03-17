@@ -68,9 +68,9 @@ async def view_raw(name = '', topic_num = '', num = '', doc_acl = 0, bbs_num = '
         if bbs_num != '' and post_num != '':
             if comment_num != '':
                 data = await api_bbs_w_comment_one(bbs_num_str + '-' + post_num_str + '-' + comment_num)
-                sub_data = orjson.loads(api_bbs_w(bbs_num_str + '-' + post_num_str).data)
+                sub_data = await api_bbs_w(bbs_num_str + '-' + post_num_str)
             else:
-                data = orjson.loads(api_bbs_w(bbs_num_str + '-' + post_num_str).data)
+                data = await api_bbs_w(bbs_num_str + '-' + post_num_str)
                 
             if 'comment' in data:
                 v_name = sub_data["title"]
