@@ -11,7 +11,7 @@ async def list_admin():
         ))
         for data in curs.fetchall():
             name = '' + \
-                ip_pas(data[0]) + ' ' + \
+                await ip_pas(data[0]) + ' ' + \
                 '<a href="/auth/list/add/' + url_pas(data[1]) + '">(' + data[1] + ')</a>' + \
             ''
 

@@ -14,7 +14,7 @@ async def login_login_2fa_email_2():
         if ip_or_user(ip) == 0:
             return redirect(conn, '/user')
 
-        if ban_check(None, 'login')[0] == 1:
+        if (await ban_check(None, 'login'))[0] == 1:
             return await re_error(conn, 0)
 
         if flask.request.method == 'POST':

@@ -228,7 +228,7 @@ async def edit(name = 'Test', section = 0, do_type = ''):
         
                 curs.execute(db_change("select id from user_set where name = 'watchlist' and data = ?"), [name])
                 for scan_user in curs.fetchall():
-                    add_alarm(scan_user[0], ip, '<a href="/w/' + url_pas(name) + '">' + html.escape(name) + '</a>')
+                    await add_alarm(scan_user[0], ip, '<a href="/w/' + url_pas(name) + '">' + html.escape(name) + '</a>')
                         
                 history_plus(conn, 
                     name,
@@ -257,7 +257,7 @@ async def edit(name = 'Test', section = 0, do_type = ''):
 
                 curs.execute(db_change("select id from user_set where name = 'watchlist' and data = ?"), [name])
                 for scan_user in curs.fetchall():
-                    add_alarm(scan_user[0], ip, '<a href="/edit_request/' + url_pas(name) + '">' + html.escape(name) + '</a> edit_request')
+                    await add_alarm(scan_user[0], ip, '<a href="/edit_request/' + url_pas(name) + '">' + html.escape(name) + '</a> edit_request')
             
                 return redirect(conn, '/edit_request_from/' + url_pas(name))
         else:

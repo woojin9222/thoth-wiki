@@ -148,7 +148,13 @@ with get_db_connect(init_mode = True) as conn:
             pass
 
         if setup_tool == 'update':
-            update(conn, int(ver_set_data[0][0]), data_db_set)
+            try:
+                loop = asyncio.get_running_loop()
+                loop.create_task(update(conn, int(ver_set_data[0][0]), data_db_set))
+            except RuntimeError:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                loop.run_until_complete(update(conn, int(ver_set_data[0][0]), data_db_set))
         else:
             set_init(conn)
 

@@ -429,7 +429,7 @@ def get_db_table_list():
     
     return create_data
 
-def update(conn, ver_num, set_data):
+async def update(conn, ver_num, set_data):
     curs = conn.cursor()
 
     # 업데이트 하위 호환 유지 함수
@@ -724,9 +724,9 @@ def update(conn, ver_num, set_data):
             for for_b in curs.fetchall():
                 lang_name = get_lang_name(conn, tool = 'inter')
                 if lang_name == 'ko-KR':
-                    add_alarm(for_b[0], 'tool:system', '메인 ACL이 권한으로 개편되면서 기존 설정 값이 날라갔으니 권한으로 재설정 해주세요.')
+                    await add_alarm(for_b[0], 'tool:system', '메인 ACL이 권한으로 개편되면서 기존 설정 값이 날라갔으니 권한으로 재설정 해주세요.')
                 else:
-                    add_alarm(for_b[0], 'tool:system', 'As the main ACL has been reorganized into the auth, the existing setting values have been lost, so please reset it to the auth.')
+                    await add_alarm(for_b[0], 'tool:system', 'As the main ACL has been reorganized into the auth, the existing setting values have been lost, so please reset it to the auth.')
 
     print('Update completed')
 
@@ -1451,7 +1451,7 @@ async def wiki_custom(conn):
         email,
         user_name,
         user_admin,
-        str(ban_check()[0]),
+        str((await ban_check())[0]),
         user_notice,
         user_acl_list,
         ip,
@@ -2321,7 +2321,7 @@ async def re_error(conn, data):
     curs = conn.cursor()
 
     if data == 0:
-        if ban_check()[0] == 1:
+        if (await ban_check())[0] == 1:
             end = '<div id="opennamu_get_user_info">' + html.escape(ip_check()) + '</div>'
         else:
             end = '<ul><li>' + get_lang(conn, 'authority_error') + '</li></ul>'

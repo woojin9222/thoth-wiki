@@ -5,7 +5,7 @@ async def user_setting_top_menu():
         curs = conn.cursor()
 
         ip = ip_check()
-        if ban_check(ip)[0] == 1:
+        if (await ban_check(ip))[0] == 1:
             return await re_error(conn, 0)
 
         if ip_or_user(ip) == 1:

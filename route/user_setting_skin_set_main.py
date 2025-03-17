@@ -107,7 +107,7 @@ async def user_setting_skin_set_main():
         curs = conn.cursor()
 
         ip = ip_check()
-        if ban_check(ip)[0] == 1:
+        if (await ban_check(ip))[0] == 1:
             return await re_error(conn, 0)
             
         set_list = user_setting_skin_set_main_set_list(conn)

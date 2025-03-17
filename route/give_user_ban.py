@@ -6,7 +6,7 @@ async def give_user_ban(name = None, ban_type = ''):
 
         ip = ip_check()
         
-        if ban_check(ip = ip, tool = 'login')[0] == 1:
+        if (await ban_check(ip = ip, tool = 'login'))[0] == 1:
             if ip_or_user(ip) == 1 or await acl_check(tool = 'all_admin_auth', ip = ip) != 0:
                 return await re_error(conn, 0)
         else:

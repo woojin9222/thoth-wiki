@@ -12,7 +12,7 @@ async def list_user(arg_num = 1):
         user_list = curs.fetchall()
         for data in user_list:
             list_data += '<li>'
-            list_data += ip_pas(data[0])
+            list_data += await ip_pas(data[0])
             list_data += ' | ' + data[1] if data[1] != '' else ''
             list_data += '</li>'
 

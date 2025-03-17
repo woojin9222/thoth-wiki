@@ -37,7 +37,7 @@ async def bbs_w_post_comment(conn, user_id, sub_code, comment_num, bbs_num_str, 
 
             comment_data += '<span style="padding-left: 20px;"></span>' * margin_count
             comment_data += api_topic_thread_make(
-                ip_pas(temp_dict['comment_user_id']),
+                await ip_pas(temp_dict['comment_user_id']),
                 date,
                 render_set(conn, doc_data = temp_dict['comment']),
                 sub_code_check,
@@ -98,7 +98,7 @@ async def bbs_w_post(bbs_num = '', post_num = ''):
                         return redirect(conn, '/bbs/w/' + bbs_num_str + '/' + post_num_str)
                     
                     data = data.replace('\r', '')
-                    data = api_topic_thread_pre_render(conn, data, id_data, ip, set_id, bbs_name, temp_dict['title'], 'post')
+                    data = await api_topic_thread_pre_render(conn, data, id_data, ip, set_id, bbs_name, temp_dict['title'], 'post')
                     
                     date = get_time()
 
@@ -106,7 +106,7 @@ async def bbs_w_post(bbs_num = '', post_num = ''):
                     curs.execute(db_change("insert into bbs_data (set_name, set_code, set_id, set_data) values ('comment_date', ?, ?, ?)"), [id_data, set_id, date])
                     curs.execute(db_change("insert into bbs_data (set_name, set_code, set_id, set_data) values ('comment_user_id', ?, ?, ?)"), [id_data, set_id, ip])
 
-                    add_alarm(temp_dict['user_id'], ip, 'BBS <a href="/bbs/w/' + bbs_num_str + '/' + post_num_str + '#' + id_data + '">' + html.escape(bbs_name) + ' - ' + html.escape(temp_dict['title']) + '#' + id_data + '</a>')
+                    await add_alarm(temp_dict['user_id'], ip, 'BBS <a href="/bbs/w/' + bbs_num_str + '/' + post_num_str + '#' + id_data + '">' + html.escape(bbs_name) + ' - ' + html.escape(temp_dict['title']) + '#' + id_data + '</a>')
 
                     return redirect(conn, '/bbs/w/' + bbs_num_str + '/' + post_num_str + '#' + id_data)
                 else:
@@ -165,9 +165,9 @@ async def bbs_w_post(bbs_num = '', post_num = ''):
                         set_id += '-' if set_id != '' else ''
                         end_id = set_id + id_data
 
-                    add_alarm(temp_dict['user_id'], ip, 'BBS <a href="/bbs/w/' + bbs_num_str + '/' + post_num_str + '#' + end_id + '">' + html.escape(bbs_name) + ' - ' + html.escape(temp_dict['title']) + '#' + end_id + '</a>')
+                    await add_alarm(temp_dict['user_id'], ip, 'BBS <a href="/bbs/w/' + bbs_num_str + '/' + post_num_str + '#' + end_id + '">' + html.escape(bbs_name) + ' - ' + html.escape(temp_dict['title']) + '#' + end_id + '</a>')
                     if comment_user_name != '':
-                        add_alarm(comment_user_name, ip, 'BBS <a href="/bbs/w/' + bbs_num_str + '/' + post_num_str + '#' + end_id + '">' + html.escape(bbs_name) + ' - ' + html.escape(temp_dict['title']) + '#' + end_id + '</a>')
+                        await add_alarm(comment_user_name, ip, 'BBS <a href="/bbs/w/' + bbs_num_str + '/' + post_num_str + '#' + end_id + '">' + html.escape(bbs_name) + ' - ' + html.escape(temp_dict['title']) + '#' + end_id + '</a>')
 
                     return redirect(conn, '/bbs/w/' + bbs_num_str + '/' + post_num_str + '#' + end_id)
             else:
@@ -181,7 +181,7 @@ async def bbs_w_post(bbs_num = '', post_num = ''):
                 data = ''
                 data += '<h2>' + html.escape(temp_dict['title']) + '</h2>'
                 data += api_topic_thread_make(
-                    ip_pas(temp_dict['user_id']),
+                    await ip_pas(temp_dict['user_id']),
                     date,
                     render_set(conn, doc_data = temp_dict['data']),
                     '0',

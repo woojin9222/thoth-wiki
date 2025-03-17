@@ -18,7 +18,7 @@ async def topic_comment_tool(topic_num = 1, num = 1):
         ban = '''
             <h2>''' + get_lang(conn, 'state') + '''</h2>
             <ul>
-                <li>''' + get_lang(conn, 'writer') + ' : ''' + ip_pas(data[0][1]) + '''</li>
+                <li>''' + get_lang(conn, 'writer') + ' : ''' + await ip_pas(data[0][1]) + '''</li>
                 <li>''' + get_lang(conn, 'time') + ' : ' + data[0][2] + '''</li>
             </ul>
             <h2>''' + get_lang(conn, 'other_tool') + '''</h2>

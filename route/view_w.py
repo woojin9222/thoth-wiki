@@ -181,7 +181,6 @@ async def view_w(name = 'Test', do_type = ''):
             name_view = name
 
         doc_data = await api_w_raw(name)
-        print(doc_data)
         if doc_data["response"] == "ok":
             render_data = await api_w_render(name, request_method = 'POST', request_data = {
                 'name' : name,

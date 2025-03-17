@@ -1,6 +1,6 @@
 from .tool.func import *
 
-def main_func_easter_egg():
+async def main_func_easter_egg():
     with get_db_connect() as conn:
         curs = conn.cursor()
 

@@ -4,7 +4,7 @@ async def login_register_2():
     with get_db_connect() as conn:
         curs = conn.cursor()
 
-        if ban_check(None, 'register')[0] == 1:
+        if (await ban_check(None, 'register'))[0] == 1:
             return await re_error(conn, 0)
 
         ip = ip_check()
