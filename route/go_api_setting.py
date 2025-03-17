@@ -10,4 +10,4 @@ async def api_setting(name = 'Test'):
         func_name += '_put'
         other_set['data'] = flask.request.form.get('data', 'Test')
     
-    return flask.Response(response = (await python_to_golang(func_name, other_set)), status = 200, mimetype = 'application/json')
+    return flask.jsonify(await python_to_golang(func_name, other_set))

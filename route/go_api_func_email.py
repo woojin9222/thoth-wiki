@@ -16,4 +16,4 @@ async def api_func_email():
         return {}
 
 async def api_func_email_exter():
-    return flask.Response(response = await api_func_email(), status = 200, mimetype = 'application/json')
+    return flask.jsonify(await api_func_email())

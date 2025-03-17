@@ -10,4 +10,4 @@ async def api_w_raw(name = 'Test', rev = '', exist_check = ''):
     return await python_to_golang(sys._getframe().f_code.co_name, other_set)
 
 async def api_w_raw_exter(name = 'Test', rev = '', exist_check = ''):
-    return flask.Response(response = await api_w_raw(name, rev, exist_check), status = 200, mimetype = 'application/json')
+    return flask.jsonify(await api_w_raw(name, rev, exist_check))

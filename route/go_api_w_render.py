@@ -96,4 +96,4 @@ async def api_w_render(name = '', tool = '', request_method = '', request_data =
             return {}
 
 async def api_w_render_exter(name = '', tool = '', request_method = '', request_data = {}):
-    return flask.Response(response = await api_w_render(name, tool, request_method, request_data), status = 200, mimetype = 'application/json')
+    return flask.jsonify(await api_w_render(name, tool, request_method, request_data))

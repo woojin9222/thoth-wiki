@@ -421,7 +421,13 @@ def auto_do_something(data_db_set):
     if data_db_set['type'] == 'sqlite':
         back_up(data_db_set)
 
-    do_every_day()
+    try:
+        loop = asyncio.get_running_loop()
+        loop.create_task(do_every_day())
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        loop.run_until_complete(do_every_day())
 
 auto_do_something(data_db_set)
 

@@ -11,6 +11,6 @@ async def api_give_auth():
         other_set['auth'] = flask.request.form.get('auth', '')
         other_set['change_auth'] = flask.request.form.get('change_auth', '')
 
-        return flask.Response(response = (await python_to_golang(func_name, other_set)), status = 200, mimetype = 'application/json')
+        return flask.jsonify(await python_to_golang(func_name, other_set))
     else:
         return flask.jsonify({}) 

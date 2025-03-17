@@ -10,4 +10,4 @@ async def api_bbs_w_comment(sub_code = '', tool = "", legacy = 'on'):
     return await python_to_golang(sys._getframe().f_code.co_name, other_set)
 
 async def api_bbs_w_comment_exter(sub_code = '', tool = "", legacy = 'on'):
-    return flask.Response(response = await api_bbs_w_comment(sub_code, tool, legacy), status = 200, mimetype = 'application/json')
+    return flask.jsonify(await api_bbs_w_comment(sub_code, tool, legacy))
