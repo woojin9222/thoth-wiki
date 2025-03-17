@@ -56,9 +56,9 @@ async def view_set(name = 'Test', multiple = False):
                     need_admin = False
             
             if need_admin:
-                if acl_check(tool = 'acl_auth') == 1:
+                if await acl_check(tool = 'acl_auth') == 1:
                     if flask.request.method == 'POST':
-                        return re_error(conn, 3)
+                        return await re_error(conn, 3)
                     else:
                         check_ok = 'disabled'
 
@@ -111,7 +111,7 @@ async def view_set(name = 'Test', multiple = False):
 
             markup_data = markup_data if markup_data != '' else 'normal'
 
-            if acl_check('', 'owner_auth', '', '') != 1:
+            if await acl_check('', 'owner_auth', '', '') != 1:
                 document_top = flask.request.form.get('document_top', '')
 
                 acl_text += 'document_top\n'
@@ -129,7 +129,7 @@ async def view_set(name = 'Test', multiple = False):
                 curs.execute(db_change("insert into data_set (doc_name, doc_rev, set_name, set_data) values (?, '', 'document_editor_top', ?)"), [name, document_editor_top])
 
             if need_admin:
-                acl_check(tool = 'acl_auth', memo = check_data)
+                await acl_check(tool = 'acl_auth', memo = check_data)
 
             history_plus(conn, 
                 name,
@@ -215,7 +215,7 @@ async def view_set(name = 'Test', multiple = False):
             data += view_set_markup(conn, document_name = name, disable = check_ok)
 
             save_button = '<button type="submit" ' + check_ok + '>' + get_lang(conn, 'save') + '</button>'
-            if acl_check('', 'owner_auth', '', '') == 1:
+            if await acl_check('', 'owner_auth', '', '') == 1:
                 check_ok = 'disabled'
 
             curs.execute(db_change("select set_data from data_set where doc_name = ? and set_name = 'document_top'"), [name])
@@ -254,7 +254,7 @@ async def view_set(name = 'Test', multiple = False):
                 save_button += ' <button type="button" onclick="w_set_reset();" ' + check_ok + '>' + get_lang(conn, 'reset') + '</button>'
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [title, wiki_set(conn), wiki_custom(conn), wiki_css([sub, 0])],
+                imp = [title, wiki_set(conn), await wiki_custom(conn), wiki_css([sub, 0])],
                 data = '''
                     <form method="post">
                         <script defer src="/views/main_css/js/route/w_set.js''' + cache_v() + '''"></script>

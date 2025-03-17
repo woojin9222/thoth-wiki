@@ -50,7 +50,7 @@ async def recent_edit_request():
         ''
 
         return easy_minify(conn, flask.render_template(skin_check(conn),
-            imp = [get_lang(conn, 'recent_edit_request'), wiki_set(conn), wiki_custom(conn), wiki_css([0, 0])],
+            imp = [get_lang(conn, 'recent_edit_request'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
             data = div,
             menu = [['recent_change', get_lang(conn, 'return')]]
         ))

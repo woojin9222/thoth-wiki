@@ -1,6 +1,6 @@
 from .tool.func import *
 
-def api_user_info(user_name = ''):
+async def api_user_info(user_name = ''):
     with get_db_connect() as conn:
         curs = conn.cursor()
 

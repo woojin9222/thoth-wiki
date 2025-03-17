@@ -3,15 +3,15 @@ import urllib.request
 
 from .tool.func import *
 
-def main_sys_update():
+async def main_sys_update():
     with get_db_connect() as conn:
         curs = conn.cursor()
 
-        if acl_check('', 'owner_auth', '', '') == 1:
-            return re_error(conn, 3)
+        if await acl_check('', 'owner_auth', '', '') == 1:
+            return await re_error(conn, 3)
 
         if flask.request.method == 'POST':
-            acl_check(tool = 'owner_auth', memo = 'update')
+            await acl_check(tool = 'owner_auth', memo = 'update')
 
             curs.execute(db_change('select data from other where name = "update"'))
             up_data = curs.fetchall()
@@ -50,10 +50,10 @@ def main_sys_update():
             
             print('Error : update failed')
 
-            return re_error(conn, 34)
+            return await re_error(conn, 34)
         else:
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'update'), wiki_set(conn), wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'update'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
                 data = get_lang(conn, 'update_warning') + '''
                     <hr class="main_hr">
                     <ul>

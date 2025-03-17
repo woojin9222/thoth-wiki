@@ -1,6 +1,6 @@
 from .tool.func import *
 
-def bbs_w(bbs_num = '', tool = 'bbs', page = 1, name = ''):
+async def bbs_w(bbs_num = '', tool = 'bbs', page = 1, name = ''):
     with get_db_connect() as conn:
         curs = conn.cursor()
         
@@ -9,7 +9,7 @@ def bbs_w(bbs_num = '', tool = 'bbs', page = 1, name = ''):
         sub = ''
         bbs_name_dict = {}
 
-        admin_auth = acl_check(tool = 'owner_auth')
+        admin_auth = await acl_check(tool = 'owner_auth')
         admin_auth = 1 if admin_auth == 0 else 0
 
         if tool == 'bbs':
@@ -189,7 +189,7 @@ def bbs_w(bbs_num = '', tool = 'bbs', page = 1, name = ''):
         data += '</table>'
 
         return easy_minify(conn, flask.render_template(skin_check(conn),
-            imp = [title_name, wiki_set(conn), wiki_custom(conn), wiki_css([sub, 0])],
+            imp = [title_name, wiki_set(conn), await wiki_custom(conn), wiki_css([sub, 0])],
             data = data,
             menu = menu
         ))

@@ -945,7 +945,7 @@ async def get_acl_list(type_data = 'normal'):
     return data["data"]
 
 ## Func-simple-with_DB
-def get_user_title_list(conn, ip = ''):
+async def get_user_title_list(conn, ip = ''):
     curs = conn.cursor()
 
     ip = ip_check() if ip == '' else ip
@@ -996,7 +996,7 @@ def get_user_title_list(conn, ip = ''):
     if curs.fetchall():
         user_title['☑️'] = '☑️ before_admin'
 
-    if acl_check(tool = 'all_admin_auth') != 1:
+    if await acl_check(tool = 'all_admin_auth') != 1:
         user_title['✅'] = '✅ admin'
     
     return user_title
@@ -1380,7 +1380,7 @@ def wiki_set(conn):
 
     return data_list
 
-def wiki_custom(conn):
+async def wiki_custom(conn):
     curs = conn.cursor()
 
     ip = ip_check()
@@ -1412,7 +1412,7 @@ def wiki_custom(conn):
         email = curs.fetchall()
         email = email[0][0] if email else ''
 
-        if acl_check(tool = 'all_admin_auth') != 1:
+        if await acl_check(tool = 'all_admin_auth') != 1:
             user_admin = '1'
 
             curs.execute(db_change("select data from user_set where id = ? and name = 'acl'"), [ip])
@@ -1748,14 +1748,14 @@ def send_email(conn, who, title, data):
 
         return 0
 
-def captcha_get(conn):
+async def captcha_get(conn):
     curs = conn.cursor()
 
     data = ''
     
-    if acl_check('', 'recaptcha_five_pass') == 0 and 'recapcha_pass' in flask.session and flask.session['recapcha_pass'] > 0:
+    if await acl_check('', 'recaptcha_five_pass') == 0 and 'recapcha_pass' in flask.session and flask.session['recapcha_pass'] > 0:
         pass
-    elif acl_check('', 'recaptcha') == 1:
+    elif await acl_check('', 'recaptcha') == 1:
         curs.execute(db_change('select data from other where name = "recaptcha"'))
         recaptcha = curs.fetchall()
         
@@ -1799,18 +1799,18 @@ def captcha_get(conn):
 
     return data
 
-def captcha_post(conn, re_data):
+async def captcha_post(conn, re_data):
     curs = conn.cursor()
 
-    if acl_check('', 'recaptcha_five_pass') == 0 and 'recapcha_pass' in flask.session and flask.session['recapcha_pass'] > 0:
+    if await acl_check('', 'recaptcha_five_pass') == 0 and 'recapcha_pass' in flask.session and flask.session['recapcha_pass'] > 0:
         pass
-    elif acl_check('', 'recaptcha') == 1:
+    elif await acl_check('', 'recaptcha') == 1:
         curs.execute(db_change('select data from other where name = "sec_re"'))
         sec_re = curs.fetchall()
         
         curs.execute(db_change('select data from other where name = "recaptcha_ver"'))
         rec_ver = curs.fetchall()
-        if captcha_get(conn) != '':
+        if await captcha_get(conn) != '':
             if not rec_ver or rec_ver[0][0] in ('', 'v3'):
                 data = requests.post(
                     'https://www.google.com/recaptcha/api/siteverify',
@@ -2037,19 +2037,19 @@ def do_edit_text_bottom_check_box_check(conn, data):
         
     return 0
 
-def do_edit_send_check(conn, data):
+async def do_edit_send_check(conn, data):
     curs = conn.cursor()
     
     curs.execute(db_change('select data from other where name = "edit_bottom_compulsion"'))
     db_data = curs.fetchall()
     if db_data and db_data[0][0] != '':
-        if acl_check('', 'edit_bottom_compulsion') == 1:
+        if await acl_check('', 'edit_bottom_compulsion') == 1:
             if data == '':
                 return 1
     
     return 0
 
-def do_edit_slow_check(conn, do_type = 'edit'):
+async def do_edit_slow_check(conn, do_type = 'edit'):
     curs = conn.cursor()
 
     if do_type == 'edit':
@@ -2060,7 +2060,7 @@ def do_edit_slow_check(conn, do_type = 'edit'):
     
     slow_edit = curs.fetchall()
     if slow_edit and slow_edit[0][0] != '':
-        if acl_check('', 'slow_edit') == 1:
+        if await acl_check('', 'slow_edit') == 1:
             slow_edit = int(number_check(slow_edit[0][0]))
 
             if do_type == 'edit':
@@ -2080,11 +2080,11 @@ def do_edit_slow_check(conn, do_type = 'edit'):
 
     return 0
 
-def do_edit_filter(conn, data):
+async def do_edit_filter(conn, data):
     curs = conn.cursor()
 
     ip = ip_check()
-    if acl_check(tool = 'edit_filter_pass') == 1:
+    if await acl_check(tool = 'edit_filter_pass') == 1:
         curs.execute(db_change("select plus, plus_t from html_filter where kind = 'regex_filter' and plus != ''"))
         for data_list in curs.fetchall():
             match = re.compile(data_list[0], re.I)
@@ -2317,7 +2317,7 @@ def history_plus(conn, title, data, date, ip, send, leng, t_check = '', mode = '
     curs.execute(db_change("insert into history (id, title, data, date, ip, send, leng, hide, type) values (?, ?, ?, ?, ?, ?, ?, '', ?)"), [id_data, title, data, date, ip, send, leng, mode])
 
 # Func-error
-def re_error(conn, data):
+async def re_error(conn, data):
     curs = conn.cursor()
 
     if data == 0:
@@ -2327,7 +2327,7 @@ def re_error(conn, data):
             end = '<ul><li>' + get_lang(conn, 'authority_error') + '</li></ul>'
 
         return easy_minify(conn, flask.render_template(skin_check(conn),
-            imp = [get_lang(conn, 'error'), wiki_set(conn), wiki_custom(conn), wiki_css([0, 0])],
+            imp = [get_lang(conn, 'error'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
             data = '<h2>' + get_lang(conn, 'error') + '</h2>' + end,
             menu = 0
         )), 401
@@ -2467,7 +2467,7 @@ def re_error(conn, data):
                 data += '<br>' + get_lang(conn, 'error_skin_set_old') + ' <a href="/skin_set">(' + get_lang(conn, 'go') + ')</a>'
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'skin_set'), wiki_set(conn), wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'skin_set'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
                 data = '' + \
                     '<div id="main_skin_set">' + \
                         '<h2>' + get_lang(conn, 'error') + '</h2>' + \
@@ -2480,7 +2480,7 @@ def re_error(conn, data):
             ))
         else:
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [title, wiki_set(conn), wiki_custom(conn), wiki_css([0, 0])],
+                imp = [title, wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
                 data = '' + \
                     '<h2>' + sub_title + '</h2>' + \
                     '<ul>' + \

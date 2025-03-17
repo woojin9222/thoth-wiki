@@ -1,11 +1,11 @@
 from .tool.func import *
 
-def main_setting_phrase():
+async def main_setting_phrase():
     with get_db_connect() as conn:
         curs = conn.cursor()
 
-        if acl_check('', 'owner_auth', '', '') == 1:
-            return re_error(conn, 0)
+        if await acl_check('', 'owner_auth', '', '') == 1:
+            return await re_error(conn, 0)
         
         i_list = [
             'contract',
@@ -46,7 +46,7 @@ def main_setting_phrase():
         if flask.request.method == 'POST':
             curs.executemany(db_change("update other set data = ? where name = ?"), [[flask.request.form.get(for_a, ''), for_a] for for_a in i_list])
 
-            acl_check(tool = 'owner_auth', memo = 'edit_set (phrase)')
+            await acl_check(tool = 'owner_auth', memo = 'edit_set (phrase)')
 
             return redirect(conn, '/setting/phrase')
         else:
@@ -61,7 +61,7 @@ def main_setting_phrase():
                     d_list += ['']
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'text_setting'), wiki_set(conn), wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'text_setting'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
                 data = render_simple_set(conn, '''
                     <form method="post">
                         <h2>''' + get_lang(conn, 'register_text') + ''' (HTML)</h2>

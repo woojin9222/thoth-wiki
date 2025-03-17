@@ -1,6 +1,6 @@
 from .tool.func import *
 
-def list_image_file(arg_num = 1, do_type = 0):
+async def list_image_file(arg_num = 1, do_type = 0):
     with get_db_connect() as conn:
         curs = conn.cursor()
 
@@ -59,7 +59,7 @@ def list_image_file(arg_num = 1, do_type = 0):
             list_data += next_fix(conn, '/list/image/', arg_num, data_list)
 
         return easy_minify(conn, flask.render_template(skin_check(conn),
-            imp = [get_lang(conn, 'image_file_list'), wiki_set(conn), wiki_custom(conn), wiki_css([0, 0])],
+            imp = [get_lang(conn, 'image_file_list'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
             data = list_data,
             menu = [['other', get_lang(conn, 'return')]]
         ))

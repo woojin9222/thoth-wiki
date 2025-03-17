@@ -1,11 +1,11 @@
 from .tool.func import *
 
-def main_setting_main():
+async def main_setting_main():
     with get_db_connect() as conn:
         curs = conn.cursor()
 
-        if acl_check('', 'owner_auth', '', '') == 1:
-            return re_error(conn, 0)
+        if await acl_check('', 'owner_auth', '', '') == 1:
+            return await re_error(conn, 0)
         
         setting_list = {
             0 : ['name', 'Wiki'],
@@ -57,7 +57,7 @@ def main_setting_main():
                     setting_list[i][0]
                 ])
 
-            acl_check(tool = 'owner_auth', memo = 'edit_set (main)')
+            await acl_check(tool = 'owner_auth', memo = 'edit_set (main)')
 
             return redirect(conn, '/setting/main')
         else:
@@ -204,7 +204,7 @@ def main_setting_main():
             '''
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'main_setting'), wiki_set(conn), wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'main_setting'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
                 data = render_simple_set(conn, '''
                     <form method="post">
                         ''' + basic_set + '''

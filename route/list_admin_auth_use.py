@@ -1,6 +1,6 @@
 from .tool.func import *
 
-def list_admin_auth_use(arg_num = 1, arg_search = 'normal'):
+async def list_admin_auth_use(arg_num = 1, arg_search = 'normal'):
     with get_db_connect() as conn:
         curs = conn.cursor()
 
@@ -26,7 +26,7 @@ def list_admin_auth_use(arg_num = 1, arg_search = 'normal'):
                     curs.execute(db_change("select data from other where name = 'ip_view'"))
                     db_data = curs.fetchall()
                     ip_view = db_data[0][0] if db_data else ''
-                    ip_view = '' if acl_check(tool = 'ban_auth') != 1 else ip_view
+                    ip_view = '' if await acl_check(tool = 'ban_auth') != 1 else ip_view
                     
                     if ip_view != '':
                         do_data = do_data.split(' ')
@@ -40,7 +40,7 @@ def list_admin_auth_use(arg_num = 1, arg_search = 'normal'):
             arg_search = html.escape(arg_search) if arg_search != 'normal' else ''
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'authority_use_list'), wiki_set(conn), wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'authority_use_list'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
                 data = '''
                     <form method="post">
                         <input class="opennamu_width_200" name="search" placeholder="''' + get_lang(conn, 'start_with_search') + '''" value="''' + arg_search + '''">

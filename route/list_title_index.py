@@ -1,6 +1,6 @@
 from .tool.func import *
 
-def list_title_index(num = 1):
+async def list_title_index(num = 1):
     with get_db_connect() as conn:
         curs = conn.cursor()
 
@@ -59,7 +59,7 @@ def list_title_index(num = 1):
         sub = ' (' + str(num) + ')'
 
         return easy_minify(conn, flask.render_template(skin_check(conn),
-            imp = [get_lang(conn, 'all_document_list'), wiki_set(conn), wiki_custom(conn), wiki_css([sub, 0])],
+            imp = [get_lang(conn, 'all_document_list'), wiki_set(conn), await wiki_custom(conn), wiki_css([sub, 0])],
             data = data,
             menu = [['other', get_lang(conn, 'return')]]
         ))

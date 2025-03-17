@@ -1,6 +1,6 @@
 from .tool.func import *
 
-def main_search_goto(name = 'Test'):
+async def main_search_goto(name = 'Test'):
     with get_db_connect() as conn:
         curs = conn.cursor()
 

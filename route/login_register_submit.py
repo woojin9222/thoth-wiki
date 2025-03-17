@@ -1,6 +1,6 @@
 from .tool.func import *
 
-def login_register_submit_2():
+async def login_register_submit_2():
     with get_db_connect() as conn:
         curs = conn.cursor()
 
@@ -50,10 +50,10 @@ def login_register_submit_2():
 
             curs.execute(db_change("insert into user_set (id, name, data) values (?, ?, ?)"), [user_app_data['id'], 'application', json.dumps(user_app_data)])
 
-            return re_error(conn, 43)
+            return await re_error(conn, 43)
         else:
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'approval_question'), wiki_set(conn), wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'approval_question'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
                 data = '''
                     <form method="post">
                         ''' + get_lang(conn, 'approval_question') + ' : ' + data_que + '''

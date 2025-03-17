@@ -335,7 +335,7 @@ def back_up(data_db_set):
 
         threading.Timer(60 * 60 * back_time, back_up, [data_db_set]).start()
 
-def do_every_day():
+async def do_every_day():
     with get_db_connect() as conn:
         curs = conn.cursor()
         
@@ -406,7 +406,7 @@ def do_every_day():
         # 칭호 관리
         curs.execute(db_change("select id from user_set where name = 'user_title' and data = '✅'"))
         for for_a in curs.fetchall():
-            if acl_check('', 'all_admin_auth', '', for_a[0]) == 1:
+            if await acl_check('', 'all_admin_auth', '', for_a[0]) == 1:
                 curs.execute(db_change("update user_set set data = '☑️' where name = 'user_title' and data = '✅' and id = ?"), [for_a[0]])
 
         threading.Timer(60 * 60 * 24, do_every_day).start()

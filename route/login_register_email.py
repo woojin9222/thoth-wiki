@@ -1,6 +1,6 @@
 from .tool.func import *
 
-def login_register_email_2():
+async def login_register_email_2():
     with get_db_connect() as conn:
         curs = conn.cursor()
 
@@ -38,10 +38,10 @@ def login_register_email_2():
 
             curs.execute(db_change('select id from user_set where name = "email" and data = ?'), [user_email])
             if curs.fetchall():
-                return re_error(conn, 35)
+                return await re_error(conn, 35)
 
             if send_email(conn, user_email, t_text, i_text) == 0:
-                return re_error(conn, 18)
+                return await re_error(conn, 18)
 
             flask.session['reg_email'] = user_email
 
@@ -52,7 +52,7 @@ def login_register_email_2():
             b_text = (sql_d[0][0] + '<hr class="main_hr">') if sql_d and sql_d[0][0] != '' else ''
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'email'), wiki_set(conn), wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'email'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
                 data = '''
                     <a href="/filter/email_filter">(''' + get_lang(conn, 'email_filter_list') + ''')</a>
                     <hr class="main_hr">

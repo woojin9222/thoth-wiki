@@ -16,7 +16,7 @@ async def bbs_w_delete(bbs_num = '', post_num = '', comment_num = ''):
         bbs_num_str = str(bbs_num)
         post_num_str = str(post_num)
 
-        if acl_check('', 'owner_auth', '') == 1:
+        if await acl_check('', 'owner_auth', '') == 1:
             return redirect(conn, '/bbs/in/' + bbs_num_str)
         
         temp_dict = await api_bbs_w(bbs_num_str + '-' + post_num_str)
@@ -54,7 +54,7 @@ async def bbs_w_delete(bbs_num = '', post_num = '', comment_num = ''):
                 sub += ' (' + comment_num + ')'
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [name, wiki_set(conn), wiki_custom(conn), wiki_css([sub, 0])],
+                imp = [name, wiki_set(conn), await wiki_custom(conn), wiki_css([sub, 0])],
                 data = render_simple_set(conn, '''
                     <form method="post">
                         <span>''' + get_lang(conn, 'delete_warning') + '''</span>

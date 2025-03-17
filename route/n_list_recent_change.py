@@ -1,9 +1,9 @@
 from .tool.func import *
 
-def list_recent_change(num = 1, set_type = 'normal'):
+async def list_recent_change(num = 1, set_type = 'normal'):
     with get_db_connect() as conn:
         return easy_minify(conn, flask.render_template(skin_check(conn),
-            imp = [get_lang(conn, 'recent_change'), wiki_set(conn), wiki_custom(conn), wiki_css(['(' + get_lang(conn, set_type) + ')', 0])],
+            imp = [get_lang(conn, 'recent_change'), wiki_set(conn), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, set_type) + ')', 0])],
             data = '' + \
                 '<div id="opennamu_list_recent_change"></div>' + \
                 '<script defer src="/views/main_css/js/route/list_recent_change.js' + cache_v() + '"></script>' + \
