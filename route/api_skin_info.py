@@ -2,7 +2,7 @@ import urllib.request
 
 from .tool.func import *
 
-def api_skin_info(name = ''):
+async def api_skin_info(name = ''):
     with get_db_connect() as conn:
         name = skin_check(conn) if name == '' else './views/' + name + '/index.html'
 

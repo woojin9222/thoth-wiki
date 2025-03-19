@@ -132,45 +132,37 @@ class flask_data_or_variable:
             else:
                 return replace_data
 
-def python_to_golang_sync(func_name, other_set = {}):
-    with class_temp_db() as m_conn:
-        m_curs = m_conn.cursor()
-        
-        if other_set == {}:
-            other_set = func_name + ' {}'
-        else:
-            other_set = func_name + ' ' + json.dumps(other_set)
-    
-        m_curs.execute('select data from temp where name = "setup_golang_port"')
-        db_data = m_curs.fetchall()
-        db_data = db_data[0][0] if db_data else "3001"
-    
-        while 1:
-            res = requests.post('http://localhost:' + db_data + '/', data = other_set)
-            data = res.text
-
-            if "error" == data:
-                raise
-            else:
-                return data
-
 async def python_to_golang(func_name, other_set = {}):
     with class_temp_db() as m_conn:
         m_curs = m_conn.cursor()
     
-        if other_set == {}:
-            other_set = func_name + ' {}'
-        else:
-            other_set = func_name + ' ' + json.dumps(other_set)
+        other_set = {
+            "url" : func_name,
+            "data" : json.dumps(other_set)
+        }
+
+        if flask.has_request_context():
+            other_set["session"] = json.dumps(dict(flask.session))
     
+            if "Cookie" in flask.request.headers:
+                other_set["cookie"] = flask.request.headers["Cookie"]
+            else:
+                other_set["cookie"] = ""
+
+            other_set["ip"] = ip_check()
+        else:
+            other_set["session"] = "{}"
+            other_set["cookie"] = ""
+            other_set["ip"] = "127.0.0.1"
+
         m_curs.execute('select data from temp where name = "setup_golang_port"')
         db_data = m_curs.fetchall()
         db_data = db_data[0][0] if db_data else "3001"
     
         async with aiohttp.ClientSession() as session:
             while 1:
-                async with session.post('http://localhost:' + db_data + '/', data = other_set) as res:
-                    data = await res.text()
+                async with session.post('http://localhost:' + db_data + '/', data = json.dumps(other_set)) as res:
+                    data = await res.json()
 
                     if "error" == data:
                         raise
@@ -437,7 +429,7 @@ def get_db_table_list():
     
     return create_data
 
-def update(conn, ver_num, set_data):
+async def update(conn, ver_num, set_data):
     curs = conn.cursor()
 
     # 업데이트 하위 호환 유지 함수
@@ -732,9 +724,9 @@ def update(conn, ver_num, set_data):
             for for_b in curs.fetchall():
                 lang_name = get_lang_name(conn, tool = 'inter')
                 if lang_name == 'ko-KR':
-                    add_alarm(for_b[0], 'tool:system', '메인 ACL이 권한으로 개편되면서 기존 설정 값이 날라갔으니 권한으로 재설정 해주세요.')
+                    await add_alarm(for_b[0], 'tool:system', '메인 ACL이 권한으로 개편되면서 기존 설정 값이 날라갔으니 권한으로 재설정 해주세요.')
                 else:
-                    add_alarm(for_b[0], 'tool:system', 'As the main ACL has been reorganized into the auth, the existing setting values have been lost, so please reset it to the auth.')
+                    await add_alarm(for_b[0], 'tool:system', 'As the main ACL has been reorganized into the auth, the existing setting values have been lost, so please reset it to the auth.')
 
     print('Update completed')
 
@@ -941,20 +933,19 @@ def redirect(conn, data = '/'):
     return flask.redirect(load_domain(conn, 'full') + data)
     
 # Golang 의존
-def get_acl_list(type_data = 'normal'):
+async def get_acl_list(type_data = 'normal'):
     if type_data == 'user':
         type_data = 'user_document'
 
     other_set = {}
     other_set['type'] = type_data
 
-    data_str = python_to_golang_sync('api_list_acl', other_set)
-    data = orjson.loads(data_str)
+    data = await python_to_golang('api_list_acl', other_set)
 
     return data["data"]
 
 ## Func-simple-with_DB
-def get_user_title_list(conn, ip = ''):
+async def get_user_title_list(conn, ip = ''):
     curs = conn.cursor()
 
     ip = ip_check() if ip == '' else ip
@@ -1005,7 +996,7 @@ def get_user_title_list(conn, ip = ''):
     if curs.fetchall():
         user_title['☑️'] = '☑️ before_admin'
 
-    if acl_check(tool = 'all_admin_auth') != 1:
+    if await acl_check(tool = 'all_admin_auth') != 1:
         user_title['✅'] = '✅ admin'
     
     return user_title
@@ -1239,7 +1230,7 @@ def skin_check(conn, set_n = 0):
         return skin
     
 def cache_v():
-    return '.cache_v284'
+    return '.cache_v285'
 
 def wiki_css(data):
     with class_temp_db() as m_conn:
@@ -1389,7 +1380,7 @@ def wiki_set(conn):
 
     return data_list
 
-def wiki_custom(conn):
+async def wiki_custom(conn):
     curs = conn.cursor()
 
     ip = ip_check()
@@ -1421,7 +1412,7 @@ def wiki_custom(conn):
         email = curs.fetchall()
         email = email[0][0] if email else ''
 
-        if acl_check(tool = 'all_admin_auth') != 1:
+        if await acl_check(tool = 'all_admin_auth') != 1:
             user_admin = '1'
 
             curs.execute(db_change("select data from user_set where id = ? and name = 'acl'"), [ip])
@@ -1460,7 +1451,7 @@ def wiki_custom(conn):
         email,
         user_name,
         user_admin,
-        str(ban_check()[0]),
+        str((await ban_check())[0]),
         user_notice,
         user_acl_list,
         ip,
@@ -1757,14 +1748,14 @@ def send_email(conn, who, title, data):
 
         return 0
 
-def captcha_get(conn):
+async def captcha_get(conn):
     curs = conn.cursor()
 
     data = ''
     
-    if acl_check('', 'recaptcha_five_pass') == 0 and 'recapcha_pass' in flask.session and flask.session['recapcha_pass'] > 0:
+    if await acl_check('', 'recaptcha_five_pass') == 0 and 'recapcha_pass' in flask.session and flask.session['recapcha_pass'] > 0:
         pass
-    elif acl_check('', 'recaptcha') == 1:
+    elif await acl_check('', 'recaptcha') == 1:
         curs.execute(db_change('select data from other where name = "recaptcha"'))
         recaptcha = curs.fetchall()
         
@@ -1808,18 +1799,18 @@ def captcha_get(conn):
 
     return data
 
-def captcha_post(conn, re_data):
+async def captcha_post(conn, re_data):
     curs = conn.cursor()
 
-    if acl_check('', 'recaptcha_five_pass') == 0 and 'recapcha_pass' in flask.session and flask.session['recapcha_pass'] > 0:
+    if await acl_check('', 'recaptcha_five_pass') == 0 and 'recapcha_pass' in flask.session and flask.session['recapcha_pass'] > 0:
         pass
-    elif acl_check('', 'recaptcha') == 1:
+    elif await acl_check('', 'recaptcha') == 1:
         curs.execute(db_change('select data from other where name = "sec_re"'))
         sec_re = curs.fetchall()
         
         curs.execute(db_change('select data from other where name = "recaptcha_ver"'))
         rec_ver = curs.fetchall()
-        if captcha_get(conn) != '':
+        if await captcha_get(conn) != '':
             if not rec_ver or rec_ver[0][0] in ('', 'v3'):
                 data = requests.post(
                     'https://www.google.com/recaptcha/api/siteverify',
@@ -1925,7 +1916,7 @@ def level_check(conn, ip = ''):
 
     return [level, exp, max_exp]
 
-def acl_check(name = '', tool = '', topic_num = '', ip = '', memo = ''):
+async def acl_check(name = '', tool = '', topic_num = '', ip = '', memo = ''):
     ip = ip_check() if ip == '' else ip
 
     other_set = {}
@@ -1934,8 +1925,7 @@ def acl_check(name = '', tool = '', topic_num = '', ip = '', memo = ''):
     other_set['topic_number'] = topic_num
     other_set['tool'] = tool
 
-    data_str = python_to_golang_sync('api_func_acl', other_set)
-    data = orjson.loads(data_str)
+    data = await python_to_golang('api_func_acl', other_set)
 
     result = 0 if data["data"] else 1
 
@@ -1944,11 +1934,11 @@ def acl_check(name = '', tool = '', topic_num = '', ip = '', memo = ''):
         other_set['ip'] = ip
         other_set['what'] = memo
 
-        python_to_golang_sync('api_func_auth_post', other_set)
+        await python_to_golang('api_func_auth_post', other_set)
 
     return result
 
-def ban_check(ip = None, tool = ''):
+async def ban_check(ip = None, tool = ''):
     ip = ip_check() if not ip else ip
     tool = '' if not tool else tool
 
@@ -1956,13 +1946,12 @@ def ban_check(ip = None, tool = ''):
     other_set['ip'] = ip
     other_set['type'] = tool
 
-    data_str = python_to_golang_sync('api_func_ban', other_set)
-    data = orjson.loads(data_str)
+    data = await python_to_golang('api_func_ban', other_set)
     data["ban"] = 1 if data["ban"] == "true" else 0
 
     return [data["ban"], data["ban_type"]]
 
-def ip_pas(raw_ip):
+async def ip_pas(raw_ip):
     other_set = {}
     other_set["ip"] = ip_check()
     
@@ -1976,24 +1965,33 @@ def ip_pas(raw_ip):
     for for_a in range(1, len(get_ip) + 1):
         other_set["data_" + str(for_a)] = get_ip[for_a - 1]
 
-    data_str = python_to_golang_sync('api_func_ip_post', other_set)
-    data = orjson.loads(data_str)
-
+    data = await python_to_golang('api_func_ip_post', other_set)
     return data["data"][raw_ip] if return_data == 1 else data["data"]
         
 # Func-edit
-def get_edit_text_bottom(conn) :
+def get_edit_text_bottom(conn, tool = '') :
     curs = conn.cursor()
     
     b_text = ''
     
     curs.execute(db_change('select data from other where name = "edit_bottom_text"'))
-    db_data= curs.fetchall()
+    db_data = curs.fetchall()
     if db_data and db_data[0][0] != '':
-        b_text = '' + \
-            db_data[0][0] + \
-            '<hr class="main_hr">' + \
-        ''
+        b_text = db_data[0][0] + '<hr class="main_hr">'
+
+    if tool != '':
+        if tool == 'edit':
+            curs.execute(db_change('select data from other where name = "edit_only_bottom_text"'))
+        elif tool == 'move':
+            curs.execute(db_change('select data from other where name = "move_bottom_text"'))
+        elif tool == 'delete':
+            curs.execute(db_change('select data from other where name = "delete_bottom_text"'))
+        else:
+            curs.execute(db_change('select data from other where name = "revert_bottom_text"'))
+
+        db_data = curs.fetchall()
+        if db_data and db_data[0][0] != '':
+            b_text = db_data[0][0] + '<hr class="main_hr">'
 
     return b_text
 
@@ -2039,19 +2037,19 @@ def do_edit_text_bottom_check_box_check(conn, data):
         
     return 0
 
-def do_edit_send_check(conn, data):
+async def do_edit_send_check(conn, data):
     curs = conn.cursor()
     
     curs.execute(db_change('select data from other where name = "edit_bottom_compulsion"'))
     db_data = curs.fetchall()
     if db_data and db_data[0][0] != '':
-        if acl_check('', 'edit_bottom_compulsion') == 1:
+        if await acl_check('', 'edit_bottom_compulsion') == 1:
             if data == '':
                 return 1
     
     return 0
 
-def do_edit_slow_check(conn, do_type = 'edit'):
+async def do_edit_slow_check(conn, do_type = 'edit'):
     curs = conn.cursor()
 
     if do_type == 'edit':
@@ -2062,7 +2060,7 @@ def do_edit_slow_check(conn, do_type = 'edit'):
     
     slow_edit = curs.fetchall()
     if slow_edit and slow_edit[0][0] != '':
-        if acl_check('', 'slow_edit') == 1:
+        if await acl_check('', 'slow_edit') == 1:
             slow_edit = int(number_check(slow_edit[0][0]))
 
             if do_type == 'edit':
@@ -2082,11 +2080,11 @@ def do_edit_slow_check(conn, do_type = 'edit'):
 
     return 0
 
-def do_edit_filter(conn, data):
+async def do_edit_filter(conn, data):
     curs = conn.cursor()
 
     ip = ip_check()
-    if acl_check(tool = 'edit_filter_pass') == 1:
+    if await acl_check(tool = 'edit_filter_pass') == 1:
         curs.execute(db_change("select plus, plus_t from html_filter where kind = 'regex_filter' and plus != ''"))
         for data_list in curs.fetchall():
             match = re.compile(data_list[0], re.I)
@@ -2166,13 +2164,13 @@ def do_reload_recent_thread(conn, topic_num, date, name = None, sub = None):
     else:
         curs.execute(db_change("insert into rd (title, sub, code, date, band, stop, agree, acl) values (?, ?, ?, ?, '', '', '', '')"), [name, sub, topic_num, date])
 
-def add_alarm(to_user, from_user, context):
+async def add_alarm(to_user, from_user, context):
     other_set = {}
     other_set['to'] = to_user
     other_set['from'] = from_user
     other_set['data'] = context
 
-    python_to_golang_sync('api_func_alarm_post', other_set)
+    await python_to_golang('api_func_alarm_post', other_set)
 
 def add_user(conn, user_name, user_pw, user_email = '', user_encode = ''):
     curs = conn.cursor()
@@ -2319,17 +2317,17 @@ def history_plus(conn, title, data, date, ip, send, leng, t_check = '', mode = '
     curs.execute(db_change("insert into history (id, title, data, date, ip, send, leng, hide, type) values (?, ?, ?, ?, ?, ?, ?, '', ?)"), [id_data, title, data, date, ip, send, leng, mode])
 
 # Func-error
-def re_error(conn, data):
+async def re_error(conn, data):
     curs = conn.cursor()
 
     if data == 0:
-        if ban_check()[0] == 1:
+        if (await ban_check())[0] == 1:
             end = '<div id="opennamu_get_user_info">' + html.escape(ip_check()) + '</div>'
         else:
             end = '<ul><li>' + get_lang(conn, 'authority_error') + '</li></ul>'
 
         return easy_minify(conn, flask.render_template(skin_check(conn),
-            imp = [get_lang(conn, 'error'), wiki_set(conn), wiki_custom(conn), wiki_css([0, 0])],
+            imp = [get_lang(conn, 'error'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
             data = '<h2>' + get_lang(conn, 'error') + '</h2>' + end,
             menu = 0
         )), 401
@@ -2469,7 +2467,7 @@ def re_error(conn, data):
                 data += '<br>' + get_lang(conn, 'error_skin_set_old') + ' <a href="/skin_set">(' + get_lang(conn, 'go') + ')</a>'
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'skin_set'), wiki_set(conn), wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'skin_set'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
                 data = '' + \
                     '<div id="main_skin_set">' + \
                         '<h2>' + get_lang(conn, 'error') + '</h2>' + \
@@ -2482,7 +2480,7 @@ def re_error(conn, data):
             ))
         else:
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [title, wiki_set(conn), wiki_custom(conn), wiki_css([0, 0])],
+                imp = [title, wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
                 data = '' + \
                     '<h2>' + sub_title + '</h2>' + \
                     '<ul>' + \

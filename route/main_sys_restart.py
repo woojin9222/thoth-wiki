@@ -1,12 +1,12 @@
 from .tool.func import *
 
-def main_sys_restart():
+async def main_sys_restart():
     with get_db_connect() as conn:
-        if acl_check('', 'owner_auth', '', '') == 1:
-            return re_error(conn, 3)
+        if await acl_check('', 'owner_auth', '', '') == 1:
+            return await re_error(conn, 3)
 
         if flask.request.method == 'POST':
-            acl_check(tool = 'owner_auth', memo = 'restart')
+            await acl_check(tool = 'owner_auth', memo = 'restart')
 
             print('Restart')
 
@@ -30,10 +30,10 @@ def main_sys_restart():
                 except:
                     pass
             else:
-                return re_error(conn, 33)
+                return await re_error(conn, 33)
         else:
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'wiki_restart'), wiki_set(conn), wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'wiki_restart'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
                 data = '''
                     <div id="opennamu_main_sys_restart"></div>
                     <script defer src="/views/main_css/js/route/main_sys_restart.js''' + cache_v() + '''"></script>

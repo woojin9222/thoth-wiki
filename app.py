@@ -148,7 +148,13 @@ with get_db_connect(init_mode = True) as conn:
             pass
 
         if setup_tool == 'update':
-            update(conn, int(ver_set_data[0][0]), data_db_set)
+            try:
+                loop = asyncio.get_running_loop()
+                loop.create_task(update(conn, int(ver_set_data[0][0]), data_db_set))
+            except RuntimeError:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                loop.run_until_complete(update(conn, int(ver_set_data[0][0]), data_db_set))
         else:
             set_init(conn)
 
@@ -335,7 +341,7 @@ def back_up(data_db_set):
 
         threading.Timer(60 * 60 * back_time, back_up, [data_db_set]).start()
 
-def do_every_day():
+async def do_every_day():
     with get_db_connect() as conn:
         curs = conn.cursor()
         
@@ -406,7 +412,7 @@ def do_every_day():
         # 칭호 관리
         curs.execute(db_change("select id from user_set where name = 'user_title' and data = '✅'"))
         for for_a in curs.fetchall():
-            if acl_check('', 'all_admin_auth', '', for_a[0]) == 1:
+            if await acl_check('', 'all_admin_auth', '', for_a[0]) == 1:
                 curs.execute(db_change("update user_set set data = '☑️' where name = 'user_title' and data = '✅' and id = ?"), [for_a[0]])
 
         threading.Timer(60 * 60 * 24, do_every_day).start()
@@ -415,7 +421,13 @@ def auto_do_something(data_db_set):
     if data_db_set['type'] == 'sqlite':
         back_up(data_db_set)
 
-    do_every_day()
+    try:
+        loop = asyncio.get_running_loop()
+        loop.create_task(do_every_day())
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        loop.run_until_complete(do_every_day())
 
 auto_do_something(data_db_set)
 
@@ -799,8 +811,8 @@ app.route('/api/xref_this/<int:page>/<everything:name>', defaults = { 'xref_type
 app.route('/api/random')(api_w_random)
 
 app.route('/api/bbs/w/<sub_code>')(api_bbs_w)
-app.route('/api/bbs/w/comment/<sub_code>')(api_bbs_w_comment)
-app.route('/api/bbs/w/comment_one/<sub_code>')(api_bbs_w_comment_one)
+app.route('/api/bbs/w/comment/<sub_code>')(api_bbs_w_comment_exter)
+app.route('/api/bbs/w/comment_one/<sub_code>')(api_bbs_w_comment_one_exter)
 
 app.route('/api/version', defaults = { 'version_list' : version_list })(api_version)
 app.route('/api/skin_info')(api_skin_info)
@@ -811,10 +823,10 @@ app.route('/api/thread/<int:topic_num>/<int:s_num>/<int:e_num>')(api_topic)
 app.route('/api/thread/<int:topic_num>/<tool>')(api_topic)
 app.route('/api/thread/<int:topic_num>')(api_topic)
 
-app.route('/api/search/<everything:name>')(api_func_search)
-app.route('/api/search_page/<int:num>/<everything:name>')(api_func_search)
-app.route('/api/search_data/<everything:name>', defaults = { 'search_type' : 'data' })(api_func_search)
-app.route('/api/search_data_page/<int:num>/<everything:name>', defaults = { 'search_type' : 'data' })(api_func_search)
+app.route('/api/search/<everything:name>')(api_func_search_exter)
+app.route('/api/search_page/<int:num>/<everything:name>')(api_func_search_exter)
+app.route('/api/search_data/<everything:name>', defaults = { 'search_type' : 'data' })(api_func_search_exter)
+app.route('/api/search_data_page/<int:num>/<everything:name>', defaults = { 'search_type' : 'data' })(api_func_search_exter)
 
 app.route('/api/recent_change')(api_list_recent_change)
 app.route('/api/recent_changes')(api_list_recent_change)
@@ -859,8 +871,8 @@ app.route('/api/v2/bbs/set/<int:bbs_num>/<name>', methods = ['GET', 'PUT'])(api_
 app.route('/api/v2/bbs/in/<int:bbs_num>/<int:page>')(api_bbs)
 app.route('/api/v2/bbs/w/<sub_code>', defaults = { 'legacy' : '' })(api_bbs_w)
 app.route('/api/v2/bbs/w/tabom/<sub_code>', methods = ['GET', 'POST'])(api_bbs_w_tabom)
-app.route('/api/v2/bbs/w/comment/<sub_code>/<tool>', defaults = { 'legacy' : '' })(api_bbs_w_comment)
-app.route('/api/v2/bbs/w/comment_one/<sub_code>/<tool>', defaults = { 'legacy' : '' })(api_bbs_w_comment_one)
+app.route('/api/v2/bbs/w/comment/<sub_code>/<tool>', defaults = { 'legacy' : '' })(api_bbs_w_comment_exter)
+app.route('/api/v2/bbs/w/comment_one/<sub_code>/<tool>', defaults = { 'legacy' : '' })(api_bbs_w_comment_one_exter)
 
 app.route('/api/v2/doc_star_doc/<int:num>/<everything:name>', defaults = { 'do_type' : 'star_doc' })(api_w_watch_list)
 app.route('/api/v2/doc_watch_list/<int:num>/<everything:name>')(api_w_watch_list)
@@ -914,6 +926,7 @@ app.route('/setting/sitemap', methods = ['POST', 'GET'])(main_setting_sitemap)
 app.route('/setting/sitemap_set', methods = ['POST', 'GET'])(main_setting_sitemap_set)
 app.route('/setting/skin_set', methods = ['POST', 'GET'])(main_setting_skin_set)
 app.route('/setting/404_page', methods = ['POST', 'GET'])(setting_404_page)
+app.route('/setting/email_test', methods = ['POST', 'GET'])(main_setting_email_test)
 
 app.route('/easter_egg')(main_func_easter_egg)
 

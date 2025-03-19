@@ -1,6 +1,6 @@
 from .tool.func import *
 
-def main_func_easter_egg():
+async def main_func_easter_egg():
     with get_db_connect() as conn:
         curs = conn.cursor()
 
@@ -28,7 +28,7 @@ def main_func_easter_egg():
             data = ''
 
         return easy_minify(conn, flask.render_template(skin_check(conn),
-            imp = ['Easter Egg', wiki_set(conn), wiki_custom(conn), wiki_css([0, 0])],
+            imp = ['Easter Egg', wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
             data = data,
             menu = 0
         ))

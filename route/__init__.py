@@ -78,6 +78,7 @@ from route.main_setting_sitemap import main_setting_sitemap
 from route.main_setting_sitemap_set import main_setting_sitemap_set
 from route.main_setting_skin_set import main_setting_skin_set
 from route.main_setting_top_menu import main_setting_top_menu
+from route.main_setting_email_test import main_setting_email_test
 
 from route.main_sys_restart import main_sys_restart
 from route.main_sys_shutdown import main_sys_shutdown
@@ -185,15 +186,15 @@ from route.go_api_func_sha224 import api_func_sha224
 from route.go_api_func_ip import api_func_ip
 from route.go_api_func_ip_menu import api_func_ip_menu
 from route.go_api_func_auth import api_func_auth
-
-from route.go_api_func_search import api_func_search
+from route.go_api_func_email import api_func_email, api_func_email_exter
+from route.go_api_func_search import api_func_search, api_func_search_exter
 
 from route.go_api_give_auth import api_give_auth
 
 from route.go_api_list_recent_change import api_list_recent_change
 from route.go_api_list_recent_discuss import api_list_recent_discuss
 from route.go_api_list_recent_block import api_list_recent_block
-from route.go_api_list_recent_edit_request import api_list_recent_edit_request
+from route.go_api_list_recent_edit_request import api_list_recent_edit_request, api_list_recent_edit_request_exter
 from route.go_api_list_old_page import api_list_old_page
 from route.go_api_list_title_index import api_list_title_index
 from route.go_api_list_acl import api_list_acl
@@ -206,8 +207,8 @@ from route.go_api_bbs_list import api_bbs_list
 from route.go_api_bbs_w import api_bbs_w
 from route.go_api_bbs_w_set import api_bbs_w_set
 from route.go_api_bbs_w_tabom import api_bbs_w_tabom
-from route.go_api_bbs_w_comment import api_bbs_w_comment
-from route.go_api_bbs_w_comment_one import api_bbs_w_comment_one
+from route.go_api_bbs_w_comment import api_bbs_w_comment, api_bbs_w_comment_exter
+from route.go_api_bbs_w_comment_one import api_bbs_w_comment_one, api_bbs_w_comment_one_exter
 
 from route.go_api_setting import api_setting
 
@@ -217,11 +218,11 @@ from route.go_api_topic_list import api_topic_list
 from route.go_api_user_rankup import api_user_rankup
 from route.go_api_user_setting_editor import api_user_setting_editor
 
-from route.go_api_w_raw import api_w_raw
-from route.go_api_w_random import api_w_random
+from route.go_api_w_raw import api_w_raw, api_w_raw_exter
+from route.go_api_w_random import api_w_random, api_w_random_exter
 from route.go_api_w_xref import api_w_xref
 from route.go_api_w_watch_list import api_w_watch_list
-from route.go_api_w_render import api_w_render
+from route.go_api_w_render import api_w_render, api_w_render_exter
 from route.go_api_w_set_reset import api_w_set_reset
 from route.go_api_w_page_view import api_w_page_view
 

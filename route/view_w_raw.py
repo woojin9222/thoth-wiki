@@ -14,7 +14,7 @@ async def view_w_raw(name = '', rev = '', doc_acl = ''):
         else:
             menu = [['w/' + url_pas(name), get_lang(conn, 'return')]]
 
-        data = json.loads((await api_w_raw(name, rev)).data)
+        data = await api_w_raw(name, rev)
         if data["response"] == "ok":
             data_in = data["data"]
         else:
@@ -37,7 +37,7 @@ async def view_w_raw(name = '', rev = '', doc_acl = ''):
             sub = ' (' + get_lang(conn, 'edit') + ')'
 
         return easy_minify(conn, flask.render_template(skin_check(conn),
-            imp = [name, wiki_set(conn), wiki_custom(conn), wiki_css([sub, 0])],
+            imp = [name, wiki_set(conn), await wiki_custom(conn), wiki_css([sub, 0])],
             data = p_data,
             menu = menu
         ))

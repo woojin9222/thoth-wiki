@@ -1,13 +1,13 @@
 from .tool.func import *
 
-def api_user_info(user_name = ''):
+async def api_user_info(user_name = ''):
     with get_db_connect() as conn:
         curs = conn.cursor()
 
         data_result = {}
         
         # name part
-        data_result['render'] = ip_pas(user_name)
+        data_result['render'] = await ip_pas(user_name)
         
         # auth part
         curs.execute(db_change("select data from user_set where id = ? and name = 'acl'"), [user_name])
@@ -32,7 +32,7 @@ def api_user_info(user_name = ''):
         data_result['max_exp'] = level_data[2]
             
         # ban part
-        ban = ban_check(user_name)
+        ban = await ban_check(user_name)
         if ban[0] == 0:
             data_result['ban'] = '0'
         else:

@@ -1,6 +1,6 @@
 from .tool.func import *
 
-def list_long_page(tool = 'long_page', arg_num = 1):
+async def list_long_page(tool = 'long_page', arg_num = 1):
     with get_db_connect() as conn:
         curs = conn.cursor()
 
@@ -26,7 +26,7 @@ def list_long_page(tool = 'long_page', arg_num = 1):
         div += '</ul>' + next_fix(conn, '/list/document/' + ('long' if title == 'long_page' else 'short') + '/', arg_num, n_list)
 
         return easy_minify(conn, flask.render_template(skin_check(conn),
-            imp = [get_lang(conn, title), wiki_set(conn), wiki_custom(conn), wiki_css([0, 0])],
+            imp = [get_lang(conn, title), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
             data = div,
             menu = [['other', get_lang(conn, 'return')]]
         ))

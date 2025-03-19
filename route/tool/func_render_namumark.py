@@ -2206,7 +2206,7 @@ class class_do_render_namumark:
                 quote_data_end = self.do_inter_render(quote_data, self.doc_set['doc_include'] + 'opennamu_quote_' + str(quote_count))
                 data_name = self.get_tool_data_storage('<div>', '</div>', quote_data_org)
 
-                self.render_data = re.sub(quote_regex, lambda x : ('\n<blockquote><back_br>\n<' + data_name + '>' + quote_data_end + '</' + data_name + '><front_br></blockquote>\n'), self.render_data, 1)
+                self.render_data = re.sub(quote_regex, lambda x : ('\n<front_br><hr class="mini_hr"><blockquote><back_br>\n<' + data_name + '>' + quote_data_end + '</' + data_name + '><front_br></blockquote><hr class="mini_hr"><back_br>\n'), self.render_data, 1)
 
             quote_count_max -= 1
             quote_count += 1

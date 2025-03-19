@@ -1,6 +1,6 @@
 from .tool.func import *
 
-def recent_app_submit_2():
+async def recent_app_submit_2():
     with get_db_connect() as conn:
         curs = conn.cursor()
 
@@ -87,19 +87,19 @@ def recent_app_submit_2():
                 div += get_lang(conn, 'no_applications_now')
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'application_list'), wiki_set(conn), wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'application_list'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
                 data = div,
                 menu = [['other', get_lang(conn, 'return')]]
             ))
         else:
-            if acl_check(tool = 'ban_auth', memo = 'app submit') == 1:
-                return re_error(conn, 0)
+            if await acl_check(tool = 'ban_auth', memo = 'app submit') == 1:
+                return await re_error(conn, 0)
 
             if flask.request.form.get('approve', '') != '':
                 curs.execute(db_change('select data from user_set where id = ? and name = "application"'), [flask.request.form.get('approve', '')])
                 application = curs.fetchall()
                 if not application:
-                    return re_error(conn, 26)
+                    return await re_error(conn, 26)
                 else:
                     application = orjson.loads(application[0][0])
 
