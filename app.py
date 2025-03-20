@@ -46,24 +46,25 @@ with get_db_connect(init_mode = True) as conn:
         else:
             setup_tool = 'init'
 
-    if setup_tool != 'normal' and run_mode != 'dev':
+    if run_mode != 'dev':
         file_name = linux_exe_chmod()
         local_file_path = os.path.join("route_go", "bin", file_name)
 
-        if os.path.exists(local_file_path):
-            print('Remove Old Binary')
-            os.remove(local_file_path)
+        if not (setup_tool == "normal" and os.path.exists(local_file_path)):
+            if os.path.exists(local_file_path):
+                print('Remove Old Binary')
+                os.remove(local_file_path)
 
-        download_url = version_list["bin_link"] + file_name
+            download_url = version_list["bin_link"] + file_name
 
-        print('Download New Binary File')
-        response = requests.get(download_url, stream = True)
-        if response.status_code == 200:
-            with open(local_file_path, 'wb') as file:
-                for chunk in response.iter_content(chunk_size = 8192):
-                    file.write(chunk)
+            print('Download New Binary File')
+            response = requests.get(download_url, stream = True)
+            if response.status_code == 200:
+                with open(local_file_path, 'wb') as file:
+                    for chunk in response.iter_content(chunk_size = 8192):
+                        file.write(chunk)
 
-            print('Complete Download')
+                print('Complete Download')
 
     if data_db_set['type'] == 'mysql':
         try:
@@ -405,7 +406,7 @@ async def do_every_day():
         curs.execute(db_change('select data from other where name = "sitemap_auto_make"'))
         db_data = curs.fetchall()
         if db_data and db_data[0][0] != '':
-            main_setting_sitemap(1)
+            await main_setting_sitemap(1)
 
             print('Make sitemap')
 
