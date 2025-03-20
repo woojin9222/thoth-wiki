@@ -3,7 +3,7 @@ from .func_tool import *
 from typing import Any
 
 class class_do_render_namumark:
-    def __init__(self, conn, doc_name, doc_data, doc_set, lang_data, do_type = 'exter'):
+    def __init__(self, conn, doc_name, doc_data, doc_set, lang_data, do_type = 'exter', parameter = {}):
         self.conn = conn
         self.curs = self.conn.cursor()
 
@@ -12,6 +12,7 @@ class class_do_render_namumark:
         self.doc_set = doc_set
 
         self.do_type = do_type
+        self.parameter = parameter
 
         self.lang_data = lang_data
         try:
@@ -1338,7 +1339,10 @@ class class_do_render_namumark:
                     else:
                         slash_add = match[0]
 
-                return slash_add + match[2]
+                if match[1] in self.parameter:
+                    return slash_add + self.parameter[match[1]]
+                else:
+                    return slash_add + match[2]
 
         self.render_data = re.sub(r'(\\+)?@([ㄱ-힣a-zA-Z0-9_]+)=((?:\\@|[^@\n])+)@', do_render_include_default_sub, self.render_data)
         self.render_data = re.sub(r'(\\+)?@([ㄱ-힣a-zA-Z0-9_]+)@', do_render_include_default_sub, self.render_data)
@@ -1882,7 +1886,58 @@ class class_do_render_namumark:
                 if middle_name:
                     middle_name = middle_name.group(1)
                     middle_name = middle_name.lower()
-                    if middle_name == '#!wiki':
+                    
+                    if middle_name == "#!if":
+                        if middle_slash:
+                            middle_data_org = re.sub(r'<(\/?(?:slash)_(?:[0-9]+)(?:[^<>]+))>', '<temp_' + middle_slash + '>', middle_data_org)
+                            self.render_data = re.sub(middle_regex, lambda x : middle_data_org, self.render_data, 1)
+                            continue
+
+                        if_data = re.sub(r'^#!if *', '', middle_data)
+
+                        var_name = ""
+                        if_state = ""
+                        parameter = ""
+                        
+                        if_regex = r"([^ ]+)(?: *)(!=|==)(?: *)([^\n]+)"
+                        if_data_get = re.search(if_regex, if_data)
+                        if if_data_get:
+                            if_data_get_data = if_data_get.groups()
+
+                            var_name = if_data_get_data[0]
+                            if_state = if_data_get_data[1]
+                            parameter = if_data_get_data[2]
+
+                            if_data = re.sub(if_regex, '', if_data)
+
+                        var_data = None
+                        if var_name in self.parameter:
+                            var_data = self.parameter[var_name]
+
+                        result_data = False
+
+                        if if_state == "==":
+                            if parameter == "null" and var_data == None:
+                                result_data = True
+                            else:
+                                parameter = re.sub(r'(^&quot;|&quot;$)', '', parameter)
+                                if parameter == var_data:
+                                    result_data = True
+                        else:
+                            if parameter == "null" and var_data != None:
+                                result_data = True
+                            else:
+                                parameter = re.sub(r'(^&quot;|&quot;$)', '', parameter)
+                                if parameter != var_data:
+                                    result_data = True
+
+                        if result_data:
+                            middle_data_pass = if_data
+                        else:
+                            middle_data_pass = ""
+                        
+                        data_name = self.get_tool_data_storage('', '', middle_data_org)
+                    elif middle_name == '#!wiki':
                         if middle_slash:
                             middle_data_org = re.sub(r'<(\/?(?:slash)_(?:[0-9]+)(?:[^<>]+))>', '<temp_' + middle_slash + '>', middle_data_org)
                             self.render_data = re.sub(middle_regex, lambda x : middle_data_org, self.render_data, 1)
@@ -1943,6 +1998,11 @@ class class_do_render_namumark:
                         data_name = self.get_tool_data_storage('<div style="' + wiki_data_style_data + '">', '</div>', middle_data_org)
                         wiki_count += 1
                     elif middle_name == '#!html':
+                        if middle_slash:
+                            middle_data_org = re.sub(r'<(\/?(?:slash)_(?:[0-9]+)(?:[^<>]+))>', '<temp_' + middle_slash + '>', middle_data_org)
+                            self.render_data = re.sub(middle_regex, lambda x : middle_data_org, self.render_data, 1)
+                            continue
+
                         html_data = re.sub(r'^#!html( |\n)', '', middle_data)
                         if middle_slash:
                             html_data += '\\'

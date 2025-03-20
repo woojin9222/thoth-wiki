@@ -164,7 +164,7 @@ async def python_to_golang(func_name, other_set = {}):
                 async with session.post('http://localhost:' + db_data + '/', data = json.dumps(other_set)) as res:
                     data = await res.json()
 
-                    if data["response"] == "error":
+                    if "response" in data and data["response"] == "error":
                         raise
                     else:
                         return data
@@ -1508,7 +1508,7 @@ def load_skin(conn, data = '', set_n = 0, default = 0):
         return skin_return_data
 
 # Func-markup
-def render_set(conn, doc_name = '', doc_data = '', data_type = 'view', markup = ''):
+def render_set(conn, doc_name = '', doc_data = '', data_type = 'view', markup = '', parameter = {}):
     curs = conn.cursor()
 
     # data_type in ['view', 'from', 'thread', 'api_view', 'api_thread', 'api_include', 'backlink']
@@ -1542,7 +1542,7 @@ def render_set(conn, doc_name = '', doc_data = '', data_type = 'view', markup = 
     if db_data and db_data[0][0] != '':
         render_lang_data['category'] = db_data[0][0]
 
-    get_class_render = class_do_render(conn, render_lang_data, markup).do_render(doc_name, doc_data, data_type)
+    get_class_render = class_do_render(conn, render_lang_data, markup, parameter).do_render(doc_name, doc_data, data_type)
     if data_type == 'backlink':
         return ''
 
