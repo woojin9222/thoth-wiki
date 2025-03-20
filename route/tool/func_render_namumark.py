@@ -201,9 +201,9 @@ class class_do_render_namumark:
 
     def get_tool_link_fix_sub(self, link_sub):
         if re.search(r'^:(분류|category):', link_sub, flags = re.I):
-            link_sub = re.sub(r'^:(?P<in>분류|category):', '\g<in>:', link_sub, flags = re.I)
+            link_sub = re.sub(r'^:(?P<in>분류|category):', '\\g<in>:', link_sub, flags = re.I)
         elif re.search(r'^:(파일|file):', link_sub, flags = re.I):
-            link_sub = re.sub(r'^:(?P<in>파일|file):', '\g<in>:', link_sub, flags = re.I)
+            link_sub = re.sub(r'^:(?P<in>파일|file):', '\\g<in>:', link_sub, flags = re.I)
 
         return link_sub
 
