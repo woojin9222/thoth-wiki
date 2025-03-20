@@ -164,7 +164,7 @@ async def python_to_golang(func_name, other_set = {}):
                 async with session.post('http://localhost:' + db_data + '/', data = json.dumps(other_set)) as res:
                     data = await res.json()
 
-                    if "error" == data:
+                    if data["response"] == "error":
                         raise
                     else:
                         return data
