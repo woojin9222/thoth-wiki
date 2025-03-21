@@ -104,15 +104,13 @@ def custom_render_template(template_name_or_list, **context):
 
 flask.render_template = custom_render_template
 
-def do_db_set(db_set):
-    with class_temp_db() as m_conn:
-        m_curs = m_conn.cursor()
+global_lang_data = {}
+global_some_set = {}
 
-        m_curs.execute('drop table if exists temp')
-        m_curs.execute('create table if not exists temp(name text, data text)')
-        
-        for for_a in db_set:
-            m_curs.execute('insert into temp (name, data) values (?, ?)', ['db_' + for_a, db_set[for_a]])
+def do_db_set(db_set):
+    for for_a in db_set:
+        global_func_some_set_do('db_' + for_a, db_set[for_a])
+        global_some_set_do('db_' + for_a, db_set[for_a])
 
 class flask_data_or_variable:
     def __init__(self, flask_data, var_dict):
@@ -132,42 +130,48 @@ class flask_data_or_variable:
             else:
                 return replace_data
 
-async def python_to_golang(func_name, other_set = {}):
-    with class_temp_db() as m_conn:
-        m_curs = m_conn.cursor()
-    
-        other_set = {
-            "url" : func_name,
-            "data" : json.dumps(other_set)
-        }
+def global_some_set_do(set_name, data = None):
+    global global_some_set
 
-        if flask.has_request_context():
-            other_set["session"] = json.dumps(dict(flask.session))
-    
-            if "Cookie" in flask.request.headers:
-                other_set["cookie"] = flask.request.headers["Cookie"]
-            else:
-                other_set["cookie"] = ""
+    if data != None:
+        global_some_set[set_name] = data
 
-            other_set["ip"] = ip_check()
+    if set_name in global_some_set:
+        return global_some_set[set_name]
+    else:
+        return None
+
+async def python_to_golang(func_name, other_set = {}):    
+    other_set = {
+        "url" : func_name,
+        "data" : json.dumps(other_set)
+    }
+
+    if flask.has_request_context():
+        other_set["session"] = json.dumps(dict(flask.session))
+
+        if "Cookie" in flask.request.headers:
+            other_set["cookie"] = flask.request.headers["Cookie"]
         else:
-            other_set["session"] = "{}"
             other_set["cookie"] = ""
-            other_set["ip"] = "127.0.0.1"
 
-        m_curs.execute('select data from temp where name = "setup_golang_port"')
-        db_data = m_curs.fetchall()
-        db_data = db_data[0][0] if db_data else "3001"
+        other_set["ip"] = ip_check()
+    else:
+        other_set["session"] = "{}"
+        other_set["cookie"] = ""
+        other_set["ip"] = "127.0.0.1"
+
+    port_data = global_some_set_do("setup_golang_port")
     
-        async with aiohttp.ClientSession() as session:
-            while 1:
-                async with session.post('http://localhost:' + db_data + '/', data = json.dumps(other_set)) as res:
-                    data = await res.json()
+    async with aiohttp.ClientSession() as session:
+        while 1:
+            async with session.post('http://localhost:' + port_data + '/', data = json.dumps(other_set)) as res:
+                data = await res.json()
 
-                    if "response" in data and data["response"] == "error":
-                        raise
-                    else:
-                        return data
+                if "response" in data and data["response"] == "error":
+                    raise
+                else:
+                    return data
 
 # Func-init
 def get_init_set_list(need = 'all'):
@@ -209,25 +213,18 @@ def get_init_set_list(need = 'all'):
     
 class get_db_connect:
     def __init__(self, db_type = '', init_mode = False):
-        with class_temp_db() as m_conn:
-            m_curs = m_conn.cursor()
+        self.db_set = {}
+        self.init_mode = init_mode
 
-            self.db_set = {}
-            self.init_mode = init_mode
+        for for_a in ("db_type", "db_name"):
+            self.db_set[for_a] = global_some_set_do(for_a)
 
-            m_curs.execute('select name, data from temp where name in ("db_type", "db_name")')
-            db_data = m_curs.fetchall()
-            for for_a in db_data:
-                self.db_set[for_a[0]] = for_a[1]
+        if db_type != '':
+            self.db_set['db_type'] = db_type
 
-            if db_type != '':
-                self.db_set['db_type'] = db_type
-
-            if self.db_set['db_type'] == 'mysql':
-                m_curs.execute('select name, data from temp where name in ("db_mysql_host", "db_mysql_user", "db_mysql_pw", "db_mysql_port")')
-                db_data = m_curs.fetchall()
-                for for_a in db_data:
-                    self.db_set[for_a[0]] = for_a[1]
+        if self.db_set['db_type'] == 'mysql':
+            for for_a in ("db_mysql_host", "db_mysql_user", "db_mysql_pw", "db_mysql_port"):
+                self.db_set[for_a] = global_some_set_do(for_a)
         
     def __enter__(self):
         if self.db_set['db_type'] == 'sqlite':
@@ -731,75 +728,73 @@ async def update(conn, ver_num, set_data):
     print('Update completed')
 
 def set_init_always(conn, ver_num, run_mode):
-    with class_temp_db() as m_conn:
-        m_curs = m_conn.cursor()
-        curs = conn.cursor()
+    curs = conn.cursor()
 
-        # 버전 기입
-        curs.execute(db_change('delete from other where name = "ver"'))
-        curs.execute(db_change('insert into other (name, data, coverage) values ("ver", ?, "")'), [ver_num])
+    # 버전 기입
+    curs.execute(db_change('delete from other where name = "ver"'))
+    curs.execute(db_change('insert into other (name, data, coverage) values ("ver", ?, "")'), [ver_num])
+    
+    # 기본 권한 그룹 설정
+    curs.execute(db_change('delete from alist where name = "owner"'))
+    curs.execute(db_change('insert into alist (name, acl) values ("owner", "owner")'))
+
+    curs.execute(db_change("select name from alist where name = 'user' limit 1"))
+    if not curs.fetchall():
+        curs.execute(db_change('insert into alist (name, acl) values ("user", "user")'))
+
+    curs.execute(db_change("select name from alist where name = 'ip' limit 1"))
+    if not curs.fetchall():
+        curs.execute(db_change('insert into alist (name, acl) values ("ip", "ip")'))
+
+    curs.execute(db_change("select name from alist where name = 'ban' limit 1"))
+    if not curs.fetchall():
+        curs.execute(db_change('insert into alist (name, acl) values ("ban", "view")'))
+
+    # 문서 댓글용 게시판 생성
+    bbs_num = '0'
+    bbs_name = 'document_comment'
+    bbs_type = 'comment'
+
+    curs.execute(db_change("insert into bbs_set (set_name, set_code, set_id, set_data) values ('bbs_name', '', ?, ?)"), [bbs_num, bbs_name])
+    curs.execute(db_change("insert into bbs_set (set_name, set_code, set_id, set_data) values ('bbs_type', '', ?, ?)"), [bbs_num, bbs_type])
+
+    # 이미지 폴더 없으면 생성
+    if not os.path.exists(load_image_url(conn)):
+        os.makedirs(load_image_url(conn))
+
+    # 비밀키 없으면 생성
+    curs.execute(db_change('select data from other where name = "key"'))
+    if not curs.fetchall():
+        curs.execute(db_change('insert into other (name, data, coverage) values ("key", ?, "")'), [load_random_key()])
+
+    # 솔트키 없으면 생성
+    curs.execute(db_change('select data from other where name = "salt_key"'))
+    if not curs.fetchall():
+        curs.execute(db_change('insert into other (name, data, coverage) values ("salt_key", ?, "")'), [load_random_key(4)])
+
+    # 문서 전체 갯수 없으면 생성
+    curs.execute(db_change('select data from other where name = "count_all_title"'))
+    if not curs.fetchall():
+        curs.execute(db_change('insert into other (name, data, coverage) values ("count_all_title", "0", "")'))
         
-        # 기본 권한 그룹 설정
-        curs.execute(db_change('delete from alist where name = "owner"'))
-        curs.execute(db_change('insert into alist (name, acl) values ("owner", "owner")'))
-
-        curs.execute(db_change("select name from alist where name = 'user' limit 1"))
-        if not curs.fetchall():
-            curs.execute(db_change('insert into alist (name, acl) values ("user", "user")'))
-
-        curs.execute(db_change("select name from alist where name = 'ip' limit 1"))
-        if not curs.fetchall():
-            curs.execute(db_change('insert into alist (name, acl) values ("ip", "ip")'))
-
-        curs.execute(db_change("select name from alist where name = 'ban' limit 1"))
-        if not curs.fetchall():
-            curs.execute(db_change('insert into alist (name, acl) values ("ban", "view")'))
-
-        # 문서 댓글용 게시판 생성
-        bbs_num = '0'
-        bbs_name = 'document_comment'
-        bbs_type = 'comment'
-
-        curs.execute(db_change("insert into bbs_set (set_name, set_code, set_id, set_data) values ('bbs_name', '', ?, ?)"), [bbs_num, bbs_name])
-        curs.execute(db_change("insert into bbs_set (set_name, set_code, set_id, set_data) values ('bbs_type', '', ?, ?)"), [bbs_num, bbs_type])
-
-        # 이미지 폴더 없으면 생성
-        if not os.path.exists(load_image_url(conn)):
-            os.makedirs(load_image_url(conn))
-
-        # 비밀키 없으면 생성
-        curs.execute(db_change('select data from other where name = "key"'))
-        if not curs.fetchall():
-            curs.execute(db_change('insert into other (name, data, coverage) values ("key", ?, "")'), [load_random_key()])
-
-        # 솔트키 없으면 생성
-        curs.execute(db_change('select data from other where name = "salt_key"'))
-        if not curs.fetchall():
-            curs.execute(db_change('insert into other (name, data, coverage) values ("salt_key", ?, "")'), [load_random_key(4)])
-
-        # 문서 전체 갯수 없으면 생성
-        curs.execute(db_change('select data from other where name = "count_all_title"'))
-        if not curs.fetchall():
-            curs.execute(db_change('insert into other (name, data, coverage) values ("count_all_title", "0", "")'))
-            
-        # 위키 접근 비밀번호 있으면 temp DB로 넘겨줌
-        curs.execute(db_change('select data from other where name = "wiki_access_password_need"'))
+    # 위키 접근 비밀번호 있으면 temp DB로 넘겨줌
+    curs.execute(db_change('select data from other where name = "wiki_access_password_need"'))
+    db_data = curs.fetchall()
+    if db_data and db_data[0][0] != '':
+        curs.execute(db_change('select data from other where name = "wiki_access_password"'))
         db_data = curs.fetchall()
-        if db_data and db_data[0][0] != '':
-            curs.execute(db_change('select data from other where name = "wiki_access_password"'))
-            db_data = curs.fetchall()
-            if db_data:
-                m_curs.execute('insert into temp (name, data) values ("wiki_access_password", ?)', [db_data[0][0]])
+        if db_data:
+            global_some_set_do("wiki_access_password", db_data[0][0])
 
-        curs.execute(db_change('select data from other where name = "load_ip_select"'))
-        db_data = curs.fetchall()
-        if db_data and db_data[0][0] != '':
-            m_curs.execute('insert into temp (name, data) values ("load_ip_select", ?)', [db_data[0][0]])
+    curs.execute(db_change('select data from other where name = "load_ip_select"'))
+    db_data = curs.fetchall()
+    if db_data and db_data[0][0] != '':
+        global_func_some_set_do("load_ip_select", db_data[0][0])
 
-        # OS마다 실행 파일 설정
-        exe_type = linux_exe_chmod()
-        if platform.system() == 'Linux' or platform.system() == 'Darwin':
-            os.system('chmod +x ./route_go/bin/' + exe_type)
+    # OS마다 실행 파일 설정
+    exe_type = linux_exe_chmod()
+    if platform.system() == 'Linux' or platform.system() == 'Darwin':
+        os.system('chmod +x ./route_go/bin/' + exe_type)
 
 def linux_exe_chmod():
     exe_type = ''
@@ -1159,36 +1154,31 @@ def get_lang_name(conn, tool = ''):
     return lang_name
 
 def get_lang(conn, data, safe = 0):
-    with class_temp_db() as m_conn:
-        m_curs = m_conn.cursor()
-
-        lang_name = get_lang_name(conn)
-        
-        m_curs.execute('select data from temp where name = ?', ['lang_' + lang_name + '_' + data])
-        db_data = m_curs.fetchall()
-        if db_data:
-            if safe == 1:
-                return db_data[0][0]
-            else:
-                return html.escape(db_data[0][0])
+    lang_name = get_lang_name(conn)
+    
+    if (lang_name + '_' + data) in global_lang_data:
+        if safe == 1:
+            return global_lang_data[lang_name + '_' + data]
         else:
-            lang_list = os.listdir('lang')
-            if (lang_name + '.json') in lang_list:
-                lang = orjson.loads(open(os.path.join('lang', lang_name + '.json'), encoding = 'utf8').read())
+            return html.escape(global_lang_data[lang_name + '_' + data])
+    else:
+        lang_list = os.listdir('lang')
+        if (lang_name + '.json') in lang_list:
+            lang = orjson.loads(open(os.path.join('lang', lang_name + '.json'), encoding = 'utf8').read())
+            
+            for data in lang:
+                global_lang_data[lang_name + '_' + data] = lang[data] 
+        else:
+            lang = {}
+
+        if data in lang:
+            if safe == 1:
+                return lang[data] 
             else:
-                lang = {}
+                return html.escape(lang[data])
 
-            if data in lang:
-                m_curs.execute('insert into temp (name, data) values (?, ?)', ['lang_' + lang_name + '_' + data, lang[data]])
-
-                if safe == 1:
-                    return lang[data] 
-                else:
-                    return html.escape(lang[data])
-
-        print(data + ' (' + lang_name + ')')
-
-        return html.escape(data + ' (' + lang_name + ')')
+    print(data + ' (' + lang_name + ')')
+    return html.escape(data + ' (' + lang_name + ')')
 
 # 하위 호환용
 def load_lang(data, safe = 0):
@@ -1233,71 +1223,66 @@ def cache_v():
     return '.cache_v285'
 
 def wiki_css(data):
-    with class_temp_db() as m_conn:
-        m_curs = m_conn.cursor()
+    # without_DB
+    data += ['' for _ in range(0, 4 - len(data))]
+    
+    data_css = ''
+    data_css_dark = ''
 
-        # without_DB
-        data += ['' for _ in range(0, 4 - len(data))]
+    data_css_ver = cache_v()
+
+    db_data = global_some_set_do("main_css")
+    if db_data:
+        data_css = db_data
+    else:
+        data_css += '<meta http-equiv="Cache-Control" content="max-age=31536000">'
+
+        # External JS
+        data_css += '<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>'
+        data_css += '<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js" integrity="sha512-rdhY3cbXURo13l/WU9VlaRyaIYeJ/KBakckXIvJNAQde8DgpOmE+eZf7ha4vdqVjTtwQt69bD2wH2LXob/LB7Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>'
+        data_css += '<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/x86asm.min.js" integrity="sha512-HeAchnWb+wLjUb2njWKqEXNTDlcd1QcyOVxb+Mc9X0bWY0U5yNHiY5hTRUt/0twG8NEZn60P3jttqBvla/i2gA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>'
+        data_css += '<script defer src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.48.0/min/vs/loader.min.js" integrity="sha512-ZG31AN9z/CQD1YDDAK4RUAvogwbJHv6bHrumrnMLzdCrVu4HeAqrUX7Jsal/cbUwXGfaMUNmQU04tQ8XXl5Znw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>'
+        data_css += '<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>'
+
+        # Func JS
+        data_css += '<script defer src="/views/main_css/js/func/func.js' + data_css_ver + '"></script>'
         
-        data_css = ''
-        data_css_dark = ''
+        data_css += '<script defer src="/views/main_css/js/func/insert_version.js' + data_css_ver + '"></script>'
+        data_css += '<script defer src="/views/main_css/js/func/insert_user_info.js' + data_css_ver + '"></script>'
+        data_css += '<script defer src="/views/main_css/js/func/insert_version_skin.js' + data_css_ver + '"></script>'
+        data_css += '<script defer src="/views/main_css/js/func/insert_http_warning_text.js' + data_css_ver + '"></script>'
+        
+        data_css += '<script defer src="/views/main_css/js/func/ie_end_of_life.js' + data_css_ver + '"></script>'
+        data_css += '<script defer src="/views/main_css/js/func/shortcut.js' + data_css_ver + '"></script>'
+        data_css += '<script defer src="/views/main_css/js/func/editor.js' + data_css_ver + '"></script>'
+        data_css += '<script defer src="/views/main_css/js/func/render.js' + data_css_ver + '"></script>'
+        
+        # Main CSS
+        data_css += '<link rel="stylesheet" href="/views/main_css/css/main.css' + data_css_ver + '">'
 
-        data_css_ver = cache_v()
+        # External CSS
+        data_css += '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">'
+        data_css += '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css" integrity="sha512-hasIneQUHlh06VNBe7f6ZcHmeRTLIaQWFd43YriJ0UND19bvYRauxthDg8E4eVNPm9bRUhr5JGeqH7FRFXQu5g==" crossorigin="anonymous" referrerpolicy="no-referrer" />'
+        data_css += '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.41.0/min/vs/editor/editor.main.min.css" integrity="sha512-MFDhxgOYIqLdcYTXw7en/n5BshKoduTitYmX8TkQ+iJOGjrWusRi8+KmfZOrgaDrCjZSotH2d1U1e/Z1KT6nWw==" crossorigin="anonymous" referrerpolicy="no-referrer" />'
 
-        m_curs.execute('select data from temp where name = "main_css"')
-        db_data = m_curs.fetchall()
-        if db_data:
-            data_css = db_data[0][0]
-        else:
-            data_css += '<meta http-equiv="Cache-Control" content="max-age=31536000">'
+        global_some_set_do("main_css", data_css)
 
-            # External JS
-            data_css += '<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>'
-            data_css += '<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js" integrity="sha512-rdhY3cbXURo13l/WU9VlaRyaIYeJ/KBakckXIvJNAQde8DgpOmE+eZf7ha4vdqVjTtwQt69bD2wH2LXob/LB7Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>'
-            data_css += '<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/x86asm.min.js" integrity="sha512-HeAchnWb+wLjUb2njWKqEXNTDlcd1QcyOVxb+Mc9X0bWY0U5yNHiY5hTRUt/0twG8NEZn60P3jttqBvla/i2gA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>'
-            data_css += '<script defer src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.48.0/min/vs/loader.min.js" integrity="sha512-ZG31AN9z/CQD1YDDAK4RUAvogwbJHv6bHrumrnMLzdCrVu4HeAqrUX7Jsal/cbUwXGfaMUNmQU04tQ8XXl5Znw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>'
-            data_css += '<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>'
+    # Darkmode
+    db_data = global_some_set_do("dark_main_css")
+    if db_data:
+        data_css_dark = db_data
+    else:
+        # Main CSS
+        data_css_dark += '<link rel="stylesheet" href="/views/main_css/css/sub/dark.css' + data_css_ver + '">'
 
-            # Func JS
-            data_css += '<script defer src="/views/main_css/js/func/func.js' + data_css_ver + '"></script>'
-            
-            data_css += '<script defer src="/views/main_css/js/func/insert_version.js' + data_css_ver + '"></script>'
-            data_css += '<script defer src="/views/main_css/js/func/insert_user_info.js' + data_css_ver + '"></script>'
-            data_css += '<script defer src="/views/main_css/js/func/insert_version_skin.js' + data_css_ver + '"></script>'
-            data_css += '<script defer src="/views/main_css/js/func/insert_http_warning_text.js' + data_css_ver + '"></script>'
-            
-            data_css += '<script defer src="/views/main_css/js/func/ie_end_of_life.js' + data_css_ver + '"></script>'
-            data_css += '<script defer src="/views/main_css/js/func/shortcut.js' + data_css_ver + '"></script>'
-            data_css += '<script defer src="/views/main_css/js/func/editor.js' + data_css_ver + '"></script>'
-            data_css += '<script defer src="/views/main_css/js/func/render.js' + data_css_ver + '"></script>'
-            
-            # Main CSS
-            data_css += '<link rel="stylesheet" href="/views/main_css/css/main.css' + data_css_ver + '">'
+        # External CSS
+        data_css_dark += '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/dark.min.css" integrity="sha512-bfLTSZK4qMP/TWeS1XJAR/VDX0Uhe84nN5YmpKk5x8lMkV0D+LwbuxaJMYTPIV13FzEv4CUOhHoc+xZBDgG9QA==" crossorigin="anonymous" referrerpolicy="no-referrer" />'
 
-            # External CSS
-            data_css += '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">'
-            data_css += '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css" integrity="sha512-hasIneQUHlh06VNBe7f6ZcHmeRTLIaQWFd43YriJ0UND19bvYRauxthDg8E4eVNPm9bRUhr5JGeqH7FRFXQu5g==" crossorigin="anonymous" referrerpolicy="no-referrer" />'
-            data_css += '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.41.0/min/vs/editor/editor.main.min.css" integrity="sha512-MFDhxgOYIqLdcYTXw7en/n5BshKoduTitYmX8TkQ+iJOGjrWusRi8+KmfZOrgaDrCjZSotH2d1U1e/Z1KT6nWw==" crossorigin="anonymous" referrerpolicy="no-referrer" />'
+        global_some_set_do("dark_main_css", data_css_dark)
 
-            m_curs.execute('insert into temp (name, data) values ("main_css", ?)', [data_css])
+    data = data[0:2] + ['', data_css] + data[2:3] + [data_css_dark] + data[3:]
 
-        # Darkmode
-        m_curs.execute('select data from temp where name = "dark_main_css"')
-        db_data = m_curs.fetchall()
-        if db_data:
-            data_css_dark = db_data[0][0]
-        else:
-            # Main CSS
-            data_css_dark += '<link rel="stylesheet" href="/views/main_css/css/sub/dark.css' + data_css_ver + '">'
-
-            # External CSS
-            data_css_dark += '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/dark.min.css" integrity="sha512-bfLTSZK4qMP/TWeS1XJAR/VDX0Uhe84nN5YmpKk5x8lMkV0D+LwbuxaJMYTPIV13FzEv4CUOhHoc+xZBDgG9QA==" crossorigin="anonymous" referrerpolicy="no-referrer" />'
-
-            m_curs.execute('insert into temp (name, data) values ("dark_main_css", ?)', [data_css_dark])
-
-        data = data[0:2] + ['', data_css] + data[2:3] + [data_css_dark] + data[3:]
-
-        return data
+    return data
 
 def cut_100(data):
     return ''
