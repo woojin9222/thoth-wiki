@@ -104,6 +104,8 @@ def custom_render_template(template_name_or_list, **context):
 
 flask.render_template = custom_render_template
 
+global_lang_data = {}
+
 def do_db_set(db_set):
     with class_temp_db() as m_conn:
         m_curs = m_conn.cursor()
@@ -1159,36 +1161,31 @@ def get_lang_name(conn, tool = ''):
     return lang_name
 
 def get_lang(conn, data, safe = 0):
-    with class_temp_db() as m_conn:
-        m_curs = m_conn.cursor()
-
-        lang_name = get_lang_name(conn)
-        
-        m_curs.execute('select data from temp where name = ?', ['lang_' + lang_name + '_' + data])
-        db_data = m_curs.fetchall()
-        if db_data:
-            if safe == 1:
-                return db_data[0][0]
-            else:
-                return html.escape(db_data[0][0])
+    lang_name = get_lang_name(conn)
+    
+    if (lang_name + '_' + data) in global_lang_data:
+        if safe == 1:
+            return global_lang_data[lang_name + '_' + data]
         else:
-            lang_list = os.listdir('lang')
-            if (lang_name + '.json') in lang_list:
-                lang = orjson.loads(open(os.path.join('lang', lang_name + '.json'), encoding = 'utf8').read())
+            return html.escape(global_lang_data[lang_name + '_' + data])
+    else:
+        lang_list = os.listdir('lang')
+        if (lang_name + '.json') in lang_list:
+            lang = orjson.loads(open(os.path.join('lang', lang_name + '.json'), encoding = 'utf8').read())
+            
+            for data in lang:
+                global_lang_data[lang_name + '_' + data] = lang[data] 
+        else:
+            lang = {}
+
+        if data in lang:
+            if safe == 1:
+                return lang[data] 
             else:
-                lang = {}
+                return html.escape(lang[data])
 
-            if data in lang:
-                m_curs.execute('insert into temp (name, data) values (?, ?)', ['lang_' + lang_name + '_' + data, lang[data]])
-
-                if safe == 1:
-                    return lang[data] 
-                else:
-                    return html.escape(lang[data])
-
-        print(data + ' (' + lang_name + ')')
-
-        return html.escape(data + ' (' + lang_name + ')')
+    print(data + ' (' + lang_name + ')')
+    return html.escape(data + ' (' + lang_name + ')')
 
 # 하위 호환용
 def load_lang(data, safe = 0):
