@@ -24,9 +24,6 @@ with open('version.json', encoding = 'utf8') as file_data:
 data_db_set = class_check_json()
 do_db_set(data_db_set)
 
-with class_temp_db() as m_conn:
-    m_conn.execute('pragma journal_mode = WAL')
-
 with get_db_connect(init_mode = True) as conn:
     curs = conn.cursor()
 
@@ -238,11 +235,8 @@ with get_db_connect(init_mode = True) as conn:
 
         server_set[i] = server_set_val
         
-with class_temp_db() as m_conn:
-    m_curs = m_conn.cursor()
-        
-    for for_a in server_set:
-        m_curs.execute('insert into temp (name, data) values (?, ?)', ['setup_' + for_a, server_set[for_a]])
+for for_a in server_set:
+    global_some_set_do('setup_' + for_a, server_set[for_a])
 
 ###
 
@@ -259,29 +253,42 @@ else:
     else:
         cmd = [os.path.join(".", "route_go", "bin", "main.arm64.exe")]
         
+cmd += [server_set["golang_port"]]
 if run_mode != '':
     cmd += [run_mode]
 
-def golang_process_check():
-    with class_temp_db() as m_conn:
-        m_curs = m_conn.cursor()
-        
-        m_curs.execute('select data from temp where name = "setup_golang_port"')
-        db_data = m_curs.fetchall()
-        db_data = db_data[0][0] if db_data else "3001"
-        
-        while True:
-            try:
-                response = requests.post('http://localhost:' + db_data + '/', data = "test {}")
-                if response.status_code == 200:
-                    print('Golang turn on')
-                    break
-            except requests.ConnectionError:
-                print('Wait golang...')
-                time.sleep(1)
+async def golang_process_check():
+    while True:
+        try:
+            other_set_temp = {}
+            for k in data_db_set:
+                other_set_temp["db_" + k] = data_db_set[k]
+
+            other_set = {
+                "url" : "test",
+                "data" : json.dumps(other_set_temp),
+                "session" : "{}",
+                "cookie" : "",
+                "ip" : "127.0.0.1"
+            }
+
+            response = requests.post('http://localhost:' + server_set["golang_port"] + '/', data = json.dumps(other_set))
+            if response.status_code == 200:
+                print('Golang turn on')
+                break
+        except requests.ConnectionError:
+            print('Wait golang...')
+            time.sleep(1)
 
 golang_process = subprocess.Popen(cmd)
-golang_process_check()
+
+try:
+    loop = asyncio.get_running_loop()
+    loop.create_task(golang_process_check())
+except RuntimeError:
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(golang_process_check())
 
 ###
 
@@ -436,29 +443,25 @@ print('Now running... http://localhost:' + server_set['port'])
 
 @app.before_request
 def before_request_func():
-    with class_temp_db() as m_conn:
-        m_curs = m_conn.cursor()
-        
-        m_curs.execute('select data from temp where name = "wiki_access_password"')
-        db_data = m_curs.fetchall()
-        if db_data:
-            access_password = db_data[0][0]
-            input_password = flask.request.cookies.get('opennamu_wiki_access', ' ')
-            if url_pas(access_password) != input_password:
-                with get_db_connect() as conn:
-                    return '''
-                        <script>
-                            "use strict";
-                            function opennamu_do_wiki_access() {
-                                let password = document.getElementById('wiki_access').value;
-                                document.cookie = 'opennamu_wiki_access=' + encodeURIComponent(password) + '; path=/;';
-                                history.go(0);
-                            }
-                        </script>
-                        <h2>''' + get_lang(conn, 'error_password_require_for_wiki_access') + '''</h2>
-                        <input type="password" id="wiki_access">
-                        <input type="submit" onclick="opennamu_do_wiki_access();">
-                    '''
+    db_data = global_some_set_do('wiki_access_password')
+    if db_data:
+        access_password = db_data
+        input_password = flask.request.cookies.get('opennamu_wiki_access', ' ')
+        if url_pas(access_password) != input_password:
+            with get_db_connect() as conn:
+                return '''
+                    <script>
+                        "use strict";
+                        function opennamu_do_wiki_access() {
+                            let password = document.getElementById('wiki_access').value;
+                            document.cookie = 'opennamu_wiki_access=' + encodeURIComponent(password) + '; path=/;';
+                            history.go(0);
+                        }
+                    </script>
+                    <h2>''' + get_lang(conn, 'error_password_require_for_wiki_access') + '''</h2>
+                    <input type="password" id="wiki_access">
+                    <input type="submit" onclick="opennamu_do_wiki_access();">
+                '''
 
 # Init-custom
 if os.path.exists('custom.py'):

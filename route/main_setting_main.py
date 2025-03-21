@@ -106,15 +106,11 @@ async def main_setting_main():
                 else:
                     branch_div += '<option value="' + i + '">' + i + '</option>'
 
+            set_data = global_some_set_do('db_type')
+            
             sqlite_only = ''
-            with class_temp_db() as m_conn:
-                m_curs = m_conn.cursor()
-
-                m_curs.execute('select data from temp where name = "db_type"')
-                db_data = m_curs.fetchall()
-                set_data = db_data[0][0] if db_data else 'sqlite'
-
-                sqlite_only = 'style="display:none;"' if set_data != 'sqlite' else ''
+            if set_data != 'sqlite':
+                sqlite_only = 'style="display:none;"'
 
             ip_load_select_data = ''
             ip_load_option = ['default', 'HTTP_X_REAL_IP', 'HTTP_CF_CONNECTING_IP', 'REMOTE_ADDR']

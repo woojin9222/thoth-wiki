@@ -18,64 +18,51 @@ try:
 except:
   import json as orjson
 
+global_func_some_set = {}
+
+def global_func_some_set_do(set_name, data = None):
+    global global_func_some_set
+    
+    if data != None:
+        global_func_some_set[set_name] = data
+
+    if set_name in global_func_some_set:
+        return global_func_some_set[set_name]
+    else:
+        return None
+
 def get_time():
     return str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
 
-class class_temp_db:
-    def __enter__(self):
-        self.conn = sqlite3.connect(
-            os.path.join('.', 'data', 'temp.db'),
-            check_same_thread = False,
-            isolation_level = None
-        )
-
-        return self.conn
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        self.conn.commit()
-        self.conn.close()
-
 def db_change(data):
-    with class_temp_db() as m_conn:
-        m_curs = m_conn.cursor()
-        
-        m_curs.execute('select data from temp where name = "db_type"')
-        db_data = m_curs.fetchall()
-        set_data = db_data[0][0] if db_data else 'sqlite'
+    set_data = global_func_some_set_do("db_type")
+    if set_data == 'mysql':
+        data = data.replace('random()', 'rand()')
+        data = data.replace('%', '%%')
+        data = data.replace('?', '%s')
+        data = data.replace('collate nocase', 'collate utf8mb4_general_ci')
 
-        if set_data == 'mysql':
-            data = data.replace('random()', 'rand()')
-            data = data.replace('%', '%%')
-            data = data.replace('?', '%s')
-            data = data.replace('collate nocase', 'collate utf8mb4_general_ci')
-
-        return data
+    return data
 
 def ip_check(d_type = 0):
     ip = '::1'
     if d_type == 0 and (flask.session and 'id' in flask.session):
         ip = flask.session['id']
     else:
-        with class_temp_db() as m_conn:
-            m_curs = m_conn.cursor()
-
-            m_curs.execute('select data from temp where name = "load_ip_select"')
-            db_data = m_curs.fetchall()
-            set_data = db_data[0][0] if db_data else 'default'
-        
-            if set_data == "default":
-                ip = flask.request.environ.get('HTTP_X_REAL_IP',
-                    flask.request.environ.get('HTTP_CF_CONNECTING_IP',
-                        flask.request.environ.get('REMOTE_ADDR',
-                            '::1'
-                        )
+        set_data = global_func_some_set_do("load_ip_select")
+        if set_data == "default":
+            ip = flask.request.environ.get('HTTP_X_REAL_IP',
+                flask.request.environ.get('HTTP_CF_CONNECTING_IP',
+                    flask.request.environ.get('REMOTE_ADDR',
+                        '::1'
                     )
                 )
-            else:
-                ip = flask.request.environ.get(set_data, '::1')
-            
-            if ip_or_user(ip) == 0:
-                ip = '::1'
+            )
+        else:
+            ip = flask.request.environ.get(set_data, '::1')
+        
+        if ip_or_user(ip) == 0:
+            ip = '::1'
 
     return ip
 
