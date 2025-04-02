@@ -169,7 +169,7 @@ async def python_to_golang(func_name, other_set = {}):
                 data = await res.json()
 
                 if "response" in data and data["response"] == "error":
-                    raise
+                    raise Exception(f"API returned error: {data}")
                 else:
                     return data
 
