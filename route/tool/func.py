@@ -172,6 +172,27 @@ async def python_to_golang(func_name, other_set = {}):
                     raise Exception(f"API returned error: {data}")
                 else:
                     return data
+                
+async def opennamu_make_list(left = '', right = '', bottom = '', class_name = ''):
+    data_html = f'<span class="{class_name}">'
+    data_html += '<div class="opennamu_recent_change">'
+    data_html += left
+
+    data_html += '<div style="float: right;">'
+    data_html += right
+    data_html += '</div>'
+
+    data_html += '<div style="clear: both;"></div>'
+
+    if bottom != '':
+        data_html += '<hr>'
+        data_html += bottom
+
+    data_html += '</div>'
+    data_html += '<hr class="main_hr">'
+    data_html += '</span>'
+
+    return data_html
 
 # Func-init
 def get_init_set_list(need = 'all'):

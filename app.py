@@ -865,7 +865,7 @@ app.route('/api/v2/list/document/<int:num>')(api_list_title_index)
 app.route('/api/v2/list/auth')(api_list_auth)
 app.route('/api/v2/list/markup')(api_list_markup)
 app.route('/api/v2/list/acl/<data_type>')(api_list_acl)
-app.route('/api/v2/history/<int:num>/<set_type>/<everything:doc_name>')(api_list_history)
+app.route('/api/v2/history/<int:num>/<set_type>/<everything:doc_name>')(api_list_history_exter)
 
 app.route('/api/v2/topic/<int:num>/<set_type>/<everything:name>')(api_topic_list)
 

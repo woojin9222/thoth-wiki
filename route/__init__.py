@@ -46,6 +46,7 @@ from route.list_title_index import list_title_index
 from route.list_user import list_user
 from route.list_user_check import list_user_check
 from route.list_user_check_delete import list_user_check_delete
+from route.list_history import list_history
 
 from route.login_find import login_find
 from route.login_find_email import login_find_email
@@ -160,7 +161,6 @@ from route.n_list_recent_discuss import list_recent_discuss
 from route.n_list_recent_block import list_recent_block
 from route.n_list_old_page import list_old_page
 from route.n_list_user_check_submit import list_user_check_submit
-from route.n_list_history import list_history
 
 from route.n_w_watch_list import w_watch_list
 
@@ -200,7 +200,7 @@ from route.go_api_list_title_index import api_list_title_index
 from route.go_api_list_acl import api_list_acl
 from route.go_api_list_auth import api_list_auth
 from route.go_api_list_markup import api_list_markup
-from route.go_api_list_history import api_list_history
+from route.go_api_list_history import api_list_history, api_list_history_exter
 
 from route.go_api_bbs import api_bbs
 from route.go_api_bbs_list import api_bbs_list
