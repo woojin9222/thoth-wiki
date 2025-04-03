@@ -25,7 +25,7 @@ async def list_history(tool = 'history', num = 1, set_type = 'normal', doc_name 
                 data = await api_list_history(num, set_type, doc_name)
 
                 title = doc_name
-                sub = '(' + get_lang(conn, 'history') + ')'
+                sub = '(' + get_lang(conn, 'history') + ') (' + get_lang(conn, set_type) + ')'
                 menu = [['other', get_lang(conn, 'return')], ['history_add/' + url_pas(doc_name), get_lang(conn, 'history_add')], ['history_reset/' + url_pas(doc_name), get_lang(conn, 'history_reset')]]
             else:
                 data = await api_list_recent_change(num, set_type, 50, '')
