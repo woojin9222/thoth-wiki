@@ -1,6 +1,6 @@
 from .tool.func import *
 
-async def login_login_2():
+async def login_login():
     with get_db_connect() as conn:
         curs = conn.cursor()
 

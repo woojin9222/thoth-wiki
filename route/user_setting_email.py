@@ -1,6 +1,6 @@
 from .tool.func import *
 
-async def user_setting_email_2():
+async def user_setting_email():
     with get_db_connect() as conn:
         curs = conn.cursor()
 

@@ -579,13 +579,13 @@ app.route('/auth/ban_regex/<everything:name>', methods = ['POST', 'GET'], defaul
 # /auth/list
 # /auth/list/add/<name>
 # /auth/list/delete/<name>
-app.route('/auth/list')(list_admin_group_2)
+app.route('/auth/list')(list_admin_group)
 app.route('/auth/list/add/<name>', methods = ['POST', 'GET'])(give_admin_groups)
-app.route('/auth/list/delete/<name>', methods = ['POST', 'GET'])(give_delete_admin_group_2)
+app.route('/auth/list/delete/<name>', methods = ['POST', 'GET'])(give_delete_admin_group)
 
 app.route('/auth/give/fix/<user_name>', methods = ['POST', 'GET'])(give_user_fix)
 
-app.route('/app_submit', methods = ['POST', 'GET'])(recent_app_submit_2)
+app.route('/app_submit', methods = ['POST', 'GET'])(recent_app_submit)
 
 # /auth/history
 app.route('/recent_block')(list_recent_block)
@@ -723,7 +723,6 @@ app.route('/user')(user_info)
 app.route('/user/<name>')(user_info)
 
 app.route('/challenge', methods = ['GET', 'POST'])(user_challenge)
-app.route('/rankup')(user_rankup)
 
 app.route('/edit_filter/<name>', methods = ['GET', 'POST'])(user_edit_filter)
 
@@ -743,9 +742,9 @@ app.route('/star_doc/<everything:name>', defaults = { 'tool' : 'star_doc' })(use
 app.route('/star_doc_from/<everything:name>', defaults = { 'tool' : 'star_doc_from' })(user_watch_list_name)
 
 # 개편 보류중 S
-app.route('/change/email', methods = ['POST', 'GET'])(user_setting_email_2)
+app.route('/change/email', methods = ['POST', 'GET'])(user_setting_email)
 app.route('/change/email/delete')(user_setting_email_delete)
-app.route('/change/email/check', methods = ['POST', 'GET'])(user_setting_email_check_2)
+app.route('/change/email/check', methods = ['POST', 'GET'])(user_setting_email_check)
 # 개편 보류중 E
 
 # Func-login
@@ -755,12 +754,12 @@ app.route('/change/email/check', methods = ['POST', 'GET'])(user_setting_email_c
 # register -> register/email -> regiter/email/check with reg_id
 # pass_find -> pass_find/email with find_id
 
-app.route('/login', methods = ['POST', 'GET'])(login_login_2)
-app.route('/login/2fa', methods = ['POST', 'GET'])(login_login_2fa_2)
-app.route('/register', methods = ['POST', 'GET'])(login_register_2)
-app.route('/register/email', methods = ['POST', 'GET'])(login_register_email_2)
-app.route('/register/email/check', methods = ['POST', 'GET'])(login_register_email_check_2)
-app.route('/register/submit', methods = ['POST', 'GET'])(login_register_submit_2)
+app.route('/login', methods = ['POST', 'GET'])(login_login)
+app.route('/login/2fa', methods = ['POST', 'GET'])(login_login_2fa)
+app.route('/register', methods = ['POST', 'GET'])(login_register)
+app.route('/register/email', methods = ['POST', 'GET'])(login_register_email)
+app.route('/register/email/check', methods = ['POST', 'GET'])(login_register_email_check)
+app.route('/register/submit', methods = ['POST', 'GET'])(login_register_submit)
 
 app.route('/login/find')(login_find)
 app.route('/login/find/key', methods = ['POST', 'GET'])(login_find_key)
@@ -859,8 +858,8 @@ app.route('/api/v2/recent_block/<set_type>/<int:num>')(api_list_recent_block)
 app.route('/api/v2/recent_block/<set_type>/<int:num>/<everything:why>')(api_list_recent_block)
 app.route('/api/v2/recent_block_user/<set_type>/<int:num>/<user_name>')(api_list_recent_block)
 app.route('/api/v2/recent_block_user/<set_type>/<int:num>/<user_name>/<everything:why>')(api_list_recent_block)
-app.route('/api/v2/list/document/old/<int:num>', defaults = { 'set_type' : 'old' })(api_list_old_page)
-app.route('/api/v2/list/document/new/<int:num>', defaults = { 'set_type' : 'new' })(api_list_old_page)
+app.route('/api/v2/list/document/old/<int:num>', defaults = { 'set_type' : 'old' })(api_list_old_page_exter)
+app.route('/api/v2/list/document/new/<int:num>', defaults = { 'set_type' : 'new' })(api_list_old_page_exter)
 app.route('/api/v2/list/document/<int:num>')(api_list_title_index)
 app.route('/api/v2/list/auth')(api_list_auth)
 app.route('/api/v2/list/markup')(api_list_markup)

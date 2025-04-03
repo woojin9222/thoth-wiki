@@ -30,14 +30,15 @@ from route.filter_all_add import filter_all_add
 from route.filter_all_delete import filter_all_delete
 
 from route.give_admin_groups import give_admin_groups
-from route.give_delete_admin_group import give_delete_admin_group_2
+from route.give_delete_admin_group import give_delete_admin_group
 from route.give_user_ban import give_user_ban
 from route.give_user_fix import give_user_fix
 
 from route.list_acl import list_acl
 from route.list_admin import list_admin
 from route.list_admin_auth_use import list_admin_auth_use
-from route.list_admin_group import list_admin_group_2
+from route.list_old_page import list_old_page
+from route.list_admin_group import list_admin_group
 from route.list_image_file import list_image_file
 from route.list_long_page import list_long_page
 from route.list_no_link import list_no_link
@@ -52,15 +53,15 @@ from route.login_find import login_find
 from route.login_find_email import login_find_email
 from route.login_find_email_check import login_find_email_check
 from route.login_find_key import login_find_key
-from route.login_login import login_login_2
-from route.login_login_2fa import login_login_2fa_2
-from route.login_login_2fa_email import login_login_2fa_email_2
+from route.login_login import login_login
+from route.login_login_2fa import login_login_2fa
+from route.login_login_2fa_email import login_login_2fa_email
 from route.login_logout import login_logout
 
-from route.login_register import login_register_2
-from route.login_register_email import login_register_email_2
-from route.login_register_email_check import login_register_email_check_2
-from route.login_register_submit import login_register_submit_2
+from route.login_register import login_register
+from route.login_register_email import login_register_email
+from route.login_register_email_check import login_register_email_check
+from route.login_register_submit import login_register_submit
 
 from route.main_func_error_404 import main_func_error_404
 
@@ -93,7 +94,7 @@ from route.main_view import main_view
 from route.main_view_file import main_view_file
 from route.main_view_image import main_view_image
 
-from route.recent_app_submit import recent_app_submit_2
+from route.recent_app_submit import recent_app_submit
 
 from route.recent_change import recent_change
 from route.recent_edit_request import recent_edit_request
@@ -125,8 +126,8 @@ from route.user_info import user_info
 from route.user_edit_filter import user_edit_filter
 
 from route.user_setting import user_setting
-from route.user_setting_email import user_setting_email_2
-from route.user_setting_email_check import user_setting_email_check_2
+from route.user_setting_email import user_setting_email
+from route.user_setting_email_check import user_setting_email_check
 from route.user_setting_email_delete import user_setting_email_delete
 from route.user_setting_head import user_setting_head
 from route.user_setting_head_reset import user_setting_head_reset
@@ -159,12 +160,9 @@ from route.vote_select import vote_select
 from route.n_list_recent_change import list_recent_change
 from route.n_list_recent_discuss import list_recent_discuss
 from route.n_list_recent_block import list_recent_block
-from route.n_list_old_page import list_old_page
 from route.n_list_user_check_submit import list_user_check_submit
 
 from route.n_w_watch_list import w_watch_list
-
-from route.n_user_rankup import user_rankup
 
 from route.n_topic_list import topic_list
 
@@ -195,7 +193,7 @@ from route.go_api_list_recent_change import api_list_recent_change
 from route.go_api_list_recent_discuss import api_list_recent_discuss
 from route.go_api_list_recent_block import api_list_recent_block
 from route.go_api_list_recent_edit_request import api_list_recent_edit_request, api_list_recent_edit_request_exter
-from route.go_api_list_old_page import api_list_old_page
+from route.go_api_list_old_page import api_list_old_page, api_list_old_page_exter
 from route.go_api_list_title_index import api_list_title_index
 from route.go_api_list_acl import api_list_acl
 from route.go_api_list_auth import api_list_auth
