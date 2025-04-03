@@ -34,10 +34,6 @@ async def main_sys_restart():
         else:
             return easy_minify(conn, flask.render_template(skin_check(conn),
                 imp = [get_lang(conn, 'wiki_restart'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
-                data = '''
-                    <div id="opennamu_main_sys_restart"></div>
-                    <script defer src="/views/main_css/js/route/main_sys_restart.js''' + cache_v() + '''"></script>
-                    <script>window.addEventListener("DOMContentLoaded", function() { opennamu_main_sys_restart(); });</script>
-                ''',
+                data = '<button type="submit">' + get_lang(conn, 'restart') + '</button>',
                 menu = [['manager', get_lang(conn, 'return')]]
             ))

@@ -2535,9 +2535,6 @@ class class_do_render_namumark:
         self.render_data = re.sub(r'<a fn_target="([^"]+)"', do_render_last_footnote, self.render_data)
 
         self.render_data_js += '''
-            document.querySelectorAll('details').forEach((el) => {
-                new Accordion(el);
-            });
             if(window.location.hash !== '' && document.getElementById(window.location.hash.replace(/^#/, ''))) {
                 document.getElementById(window.location.hash.replace(/^#/, '')).focus();
             }\n

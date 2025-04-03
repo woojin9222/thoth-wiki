@@ -39,10 +39,10 @@ async def list_history(num = 1, set_type = 'normal', doc_name = 'Test'):
             for for_a in range(len(data)):
                 if data[for_a][6] != "" and data[for_a][1] == "":
                     if date_heading != '----':
-                        data_html += '<h2 class="opennamu_list_hidden">----</h2>'
+                        data_html += '<h2>----</h2>'
                         date_heading = '----'
 
-                    data_html += await opennamu_make_list('----', '', '', 'opennamu_list_hidden')
+                    data_html += await opennamu_make_list('----', '', '', '')
                     continue
 
                 left = ''
