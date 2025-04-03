@@ -1176,7 +1176,7 @@ def get_lang_name(conn, tool = ''):
 
 def get_lang(conn, data, safe = 0):
     lang_name = get_lang_name(conn)
-    
+
     if (lang_name + '_' + data) in global_lang_data:
         if safe == 1:
             return global_lang_data[lang_name + '_' + data]
@@ -1187,8 +1187,8 @@ def get_lang(conn, data, safe = 0):
         if (lang_name + '.json') in lang_list:
             lang = orjson.loads(open(os.path.join('lang', lang_name + '.json'), encoding = 'utf8').read())
             
-            for data in lang:
-                global_lang_data[lang_name + '_' + data] = lang[data] 
+            for title in lang:
+                global_lang_data[lang_name + '_' + title] = lang[title] 
         else:
             lang = {}
 
@@ -1274,7 +1274,6 @@ def wiki_css(data):
         data_css += '<script defer src="/views/main_css/js/func/insert_http_warning_text.js' + data_css_ver + '"></script>'
         
         data_css += '<script defer src="/views/main_css/js/func/ie_end_of_life.js' + data_css_ver + '"></script>'
-        data_css += '<script defer src="/views/main_css/js/func/shortcut.js' + data_css_ver + '"></script>'
         data_css += '<script defer src="/views/main_css/js/func/editor.js' + data_css_ver + '"></script>'
         data_css += '<script defer src="/views/main_css/js/func/render.js' + data_css_ver + '"></script>'
         

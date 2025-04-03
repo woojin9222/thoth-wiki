@@ -605,9 +605,9 @@ app.route('/recent_block/private/<int:num>', defaults = { 'tool' : 'private' })(
 app.route('/recent_block/ongoing', defaults = { 'tool' : 'ongoing' })(list_recent_block)
 app.route('/recent_block/ongoing/<int:num>', defaults = { 'tool' : 'ongoing' })(list_recent_block)
 
-app.route('/recent_change')(list_recent_change)
-app.route('/recent_changes')(list_recent_change)
-app.route('/recent_change/<int:num>/<set_type>')(list_recent_change)
+app.route('/recent_change', defaults = { 'tool' : 'recent_change' })(list_history)
+app.route('/recent_changes', defaults = { 'tool' : 'recent_change' })(list_history)
+app.route('/recent_change/<int:num>/<set_type>', defaults = { 'tool' : 'recent_change' })(list_history)
 
 app.route('/recent_discuss', defaults = { 'tool' : 'normal' })(list_recent_discuss)
 app.route('/recent_discuss/<int:num>/<tool>')(list_recent_discuss)
@@ -831,10 +831,10 @@ app.route('/api/search_page/<int:num>/<everything:name>')(api_func_search_exter)
 app.route('/api/search_data/<everything:name>', defaults = { 'search_type' : 'data' })(api_func_search_exter)
 app.route('/api/search_data_page/<int:num>/<everything:name>', defaults = { 'search_type' : 'data' })(api_func_search_exter)
 
-app.route('/api/recent_change')(api_list_recent_change)
-app.route('/api/recent_changes')(api_list_recent_change)
-app.route('/api/recent_change/<int:limit>')(api_list_recent_change)
-app.route('/api/recent_change/<int:limit>/<set_type>/<int:num>')(api_list_recent_change)
+app.route('/api/recent_change')(api_list_recent_change_exter)
+app.route('/api/recent_changes')(api_list_recent_change_exter)
+app.route('/api/recent_change/<int:limit>')(api_list_recent_change_exter)
+app.route('/api/recent_change/<int:limit>/<set_type>/<int:num>')(api_list_recent_change_exter)
 
 app.route('/api/recent_edit_request')(api_list_recent_edit_request)
 app.route('/api/recent_edit_request/<int:limit>/<set_type>/<int:num>')(api_list_recent_edit_request)
@@ -852,7 +852,7 @@ app.route('/api/image/<everything:name>')(api_image_view)
 
 ## v2 API
 app.route('/api/v2/recent_edit_request/<set_type>/<int:num>', defaults = { 'limit' : 50 })(api_list_recent_edit_request)
-app.route('/api/v2/recent_change/<set_type>/<int:num>', defaults = { 'legacy' : '', 'limit' : 50 })(api_list_recent_change)
+app.route('/api/v2/recent_change/<set_type>/<int:num>', defaults = { 'legacy' : '', 'limit' : 50 })(api_list_recent_change_exter)
 app.route('/api/v2/recent_discuss/<set_type>/<int:num>', defaults = { 'legacy' : '', 'limit' : 50 })(api_list_recent_discuss)
 app.route('/api/v2/recent_block/<set_type>/<int:num>')(api_list_recent_block)
 app.route('/api/v2/recent_block/<set_type>/<int:num>/<everything:why>')(api_list_recent_block)

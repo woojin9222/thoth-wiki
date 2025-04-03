@@ -157,7 +157,6 @@ from route.vote_end import vote_end
 from route.vote_list import vote_list
 from route.vote_select import vote_select
 
-from route.n_list_recent_change import list_recent_change
 from route.n_list_recent_discuss import list_recent_discuss
 from route.n_list_recent_block import list_recent_block
 from route.n_list_user_check_submit import list_user_check_submit
@@ -189,7 +188,7 @@ from route.go_api_func_search import api_func_search, api_func_search_exter
 
 from route.go_api_give_auth import api_give_auth
 
-from route.go_api_list_recent_change import api_list_recent_change
+from route.go_api_list_recent_change import api_list_recent_change, api_list_recent_change_exter
 from route.go_api_list_recent_discuss import api_list_recent_discuss
 from route.go_api_list_recent_block import api_list_recent_block
 from route.go_api_list_recent_edit_request import api_list_recent_edit_request, api_list_recent_edit_request_exter
