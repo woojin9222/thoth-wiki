@@ -1,5 +1,30 @@
 from .tool.func import *
 
+async def main_sys_restart_do():
+    print('Restart')
+
+    python_ver = ''
+    python_ver = str(sys.version_info.major) + '.' + str(sys.version_info.minor)
+
+    run_list = [sys.executable, 'python' + python_ver, 'python3', 'python', 'py -' + python_ver]
+    for exe_name in run_list:
+        try:
+            os.execl(exe_name, sys.executable, *sys.argv)
+        except:
+            pass
+
+        try:
+            os.execl(exe_name, '"' + sys.executable + '"', *sys.argv)
+        except:
+            pass
+
+        try:
+            os.execl(exe_name, os.path.abspath(__file__), *sys.argv)
+        except:
+            pass
+    else:
+        return 0
+
 async def main_sys_restart():
     with get_db_connect() as conn:
         if await acl_check('', 'owner_auth', '', '') == 1:
@@ -8,28 +33,7 @@ async def main_sys_restart():
         if flask.request.method == 'POST':
             await acl_check(tool = 'owner_auth', memo = 'restart')
 
-            print('Restart')
-
-            python_ver = ''
-            python_ver = str(sys.version_info.major) + '.' + str(sys.version_info.minor)
-
-            run_list = [sys.executable, 'python' + python_ver, 'python3', 'python', 'py -' + python_ver]
-            for exe_name in run_list:
-                try:
-                    os.execl(exe_name, sys.executable, *sys.argv)
-                except:
-                    pass
-
-                try:
-                    os.execl(exe_name, '"' + sys.executable + '"', *sys.argv)
-                except:
-                    pass
-
-                try:
-                    os.execl(exe_name, os.path.abspath(__file__), *sys.argv)
-                except:
-                    pass
-            else:
+            if await main_sys_restart_do() == 0:
                 return await re_error(conn, 33)
         else:
             return easy_minify(conn, flask.render_template(skin_check(conn),

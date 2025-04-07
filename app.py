@@ -941,13 +941,17 @@ app.route('/<regex("[^.]+\\.(?:txt|xml|ico)"):data>')(main_view_file)
 
 app.route('/shutdown', methods = ['POST', 'GET'])(main_sys_shutdown)
 app.route('/restart', methods = ['POST', 'GET'])(main_sys_restart)
-app.route('/update', methods = ['POST', 'GET'])(main_sys_update)
+app.route('/update', defaults = { 'golang_process' : golang_process }, methods = ['POST', 'GET'])(main_sys_update)
 
 app.errorhandler(404)(main_func_error_404)
 
 def terminate_golang():
     if golang_process.poll() is None:
         golang_process.terminate()
+        try:
+            golang_process.wait(timeout = 5)
+        except subprocess.TimeoutExpired:
+            golang_process.kill()
 
 def signal_handler(signal, frame):
     terminate_golang()
