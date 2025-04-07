@@ -25,13 +25,20 @@ async def main_sys_restart_do():
     else:
         return 0
 
-async def main_sys_restart():
+async def main_sys_restart(golang_process):
     with get_db_connect() as conn:
         if await acl_check('', 'owner_auth', '', '') == 1:
             return await re_error(conn, 3)
 
         if flask.request.method == 'POST':
             await acl_check(tool = 'owner_auth', memo = 'restart')
+
+            if golang_process.poll() is None:
+                golang_process.terminate()
+                try:
+                    golang_process.wait(timeout = 5)
+                except subprocess.TimeoutExpired:
+                    golang_process.kill()
 
             if await main_sys_restart_do() == 0:
                 return await re_error(conn, 33)
