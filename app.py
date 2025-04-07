@@ -443,7 +443,7 @@ print('Now running... http://localhost:' + server_set['port'])
 @app.before_request
 def before_request_func():
     db_data = global_some_set_do('wiki_access_password')
-    if db_data:
+    if db_data and db_data != '':
         access_password = db_data
         input_password = flask.request.cookies.get('opennamu_wiki_access', ' ')
         if url_pas(access_password) != input_password:

@@ -54,7 +54,7 @@ def ip_check(d_type = 0):
         ip = flask.session['id']
     else:
         set_data = global_func_some_set_do("load_ip_select")
-        if set_data == "default":
+        if not set_data or set_data == "default":
             ip = flask.request.environ.get('HTTP_X_REAL_IP',
                 flask.request.environ.get('HTTP_CF_CONNECTING_IP',
                     flask.request.environ.get('REMOTE_ADDR',
