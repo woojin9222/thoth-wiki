@@ -45,6 +45,10 @@ async def main_sys_restart(golang_process):
         else:
             return easy_minify(conn, flask.render_template(skin_check(conn),
                 imp = [get_lang(conn, 'wiki_restart'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
-                data = '<button type="submit">' + get_lang(conn, 'restart') + '</button>',
+                data = '''
+                    <form method="post">
+                        <button type="submit">''' + get_lang(conn, 'restart') + '''</button>
+                    </form>
+                ''',
                 menu = [['manager', get_lang(conn, 'return')]]
             ))
