@@ -30,44 +30,6 @@ if os.path.exists(os.path.join('data', 'version.json')):
     if data_load_ver == version_list['r_ver']:
         data_up_date = 0
 
-if data_up_date == 1:
-    with open(os.path.join('data', 'version.json'), 'w', encoding = 'utf8') as f:
-        f.write(version_list['r_ver'])
-    
-    if platform.system() in ('Linux', 'Darwin', 'Windows'):
-        python_ver = ''
-        python_ver = str(sys.version_info.major) + '.' + str(sys.version_info.minor)
-
-        run_list = [sys.executable, 'python' + python_ver, 'python3', 'python', 'py -' + python_ver]
-        for exe_name in run_list:
-            try:
-                subprocess.check_call([exe_name, "-m", "pip", "install", "--upgrade", "--user", "-r", "requirements.txt"])
-
-                try:
-                    os.execl(exe_name, sys.executable, *sys.argv)
-                except:
-                    pass
-
-                try:
-                    os.execl(exe_name, '"' + sys.executable + '"', *sys.argv)
-                except:
-                    pass
-
-                try:
-                    os.execl(exe_name, os.path.abspath(__file__), *sys.argv)
-                except:
-                    pass
-            except:
-                pass
-        else:
-            print('Error : automatic installation is not supported.')
-            print('Help : try "python3 -m pip install -r requirements.txt"')
-    else:
-        print('Error : automatic installation is not supported.')
-        print('Help : try "python3 -m pip install -r requirements.txt"')
-else:
-    print('PIP check pass')
-
 # Init-Load
 from .func_tool import *
 from .func_render import class_do_render
