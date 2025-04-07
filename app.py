@@ -1,6 +1,5 @@
 # Init
 import os
-import re
 import signal
 import atexit
 import logging

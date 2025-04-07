@@ -4,7 +4,6 @@ import hashlib
 import flask
 import random
 import string
-import re
 
 import os
 import html
