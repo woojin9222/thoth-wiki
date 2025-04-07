@@ -195,26 +195,6 @@ function opennamu_do_category_spread() {
     }
 }
 
-function opennamu_do_include(name, render_name, to_obj, option_obj) {
-    let option = {};
-    if(option_obj !== '') {
-        if(document.getElementById(option_obj)) {
-            option = document.getElementById(option_obj).innerHTML;
-            option = decodeURIComponent(option);
-        }
-    }
-
-    fetch("/api/raw/" + opennamu_do_url_encode(name)).then(function(res) {
-        return res.json();
-    }).then(function(data) {
-        if(data["data"]) {
-            opennamu_do_render(to_obj, data["data"], render_name, 'include', option, function() {
-                document.getElementById(option_obj).style.display = "inline";
-            });
-        }
-    });
-}
-
 function opennamu_do_toc() {
     let data = document.getElementById('opennamu_render_complete');
     let h_tag = data.querySelectorAll("h1, h2, h3, h4, h5, h6");

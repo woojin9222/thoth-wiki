@@ -1509,7 +1509,17 @@ def render_set(conn, doc_name = '', doc_data = '', data_type = 'view', markup = 
     if db_data and db_data[0][0] != '':
         render_lang_data['category'] = db_data[0][0]
 
-    get_class_render = class_do_render(conn, render_lang_data, markup, parameter).do_render(doc_name, doc_data, data_type)
+    get_class_render = class_do_render(
+        conn,
+        render_lang_data,
+        markup,
+        parameter,
+        render_set
+    ).do_render(
+        doc_name,
+        doc_data,
+        data_type
+    )
     if data_type == 'backlink':
         return ''
 

@@ -63,6 +63,8 @@ async def list_history(tool = 'history', num = 1, set_type = 'normal', doc_name 
                     data_html += await opennamu_make_list('----', '', '', '')
                     continue
 
+                doc_name = url_pas(data[for_a][1])
+
                 left = '<a href="/w/' + doc_name + '">' + html.escape(data[for_a][1]) + '</a> '
                 rev = ''
 
