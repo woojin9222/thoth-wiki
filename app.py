@@ -800,8 +800,8 @@ app.route('/bbs/delete/<int:bbs_num>/<int:post_num>/<comment_num>', methods = ['
 
 # Func-api
 ## v1 API
-app.route('/api/render', methods = ['POST'])(api_w_render)
-app.route('/api/render/<tool>', methods = ['POST'])(api_w_render)
+app.route('/api/render', methods = ['POST'])(api_w_render_exter)
+app.route('/api/render/<tool>', methods = ['POST'])(api_w_render_exter)
 
 app.route('/api/raw_exist/<everything:name>', defaults = { 'exist_check' : 'on' })(api_w_raw)
 app.route('/api/raw_rev/<int(signed = True):rev>/<everything:name>')(api_w_raw)
@@ -835,8 +835,8 @@ app.route('/api/recent_changes')(api_list_recent_change_exter)
 app.route('/api/recent_change/<int:limit>')(api_list_recent_change_exter)
 app.route('/api/recent_change/<int:limit>/<set_type>/<int:num>')(api_list_recent_change_exter)
 
-app.route('/api/recent_edit_request')(api_list_recent_edit_request)
-app.route('/api/recent_edit_request/<int:limit>/<set_type>/<int:num>')(api_list_recent_edit_request)
+app.route('/api/recent_edit_request')(api_list_recent_edit_request_exter)
+app.route('/api/recent_edit_request/<int:limit>/<set_type>/<int:num>')(api_list_recent_edit_request_exter)
 
 app.route('/api/recent_discuss/<set_type>/<int:limit>')(api_list_recent_discuss)
 app.route('/api/recent_discuss/<int:limit>')(api_list_recent_discuss)
@@ -901,7 +901,6 @@ app.route('/other')(main_tool_other)
 app.route('/manager', methods = ['POST', 'GET'])(main_tool_admin)
 app.route('/manager/<int:num>', methods = ['POST', 'GET'])(main_tool_redirect)
 app.route('/manager/<int:num>/<everything:add_2>', methods = ['POST', 'GET'])(main_tool_redirect)
-app.route('/redirect_to/<int:n>')(main_redirect)
 
 app.route('/search', methods=['POST'])(main_search)
 app.route('/search/<everything:name>', methods = ['POST', 'GET'])(main_search_deep)

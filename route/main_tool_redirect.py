@@ -20,6 +20,7 @@ async def main_tool_redirect(num = 1, add_2 = ''):
             13 : [get_lang(conn, 'document_name'), '/edit', get_lang(conn, 'load')],
             14 : [get_lang(conn, 'document_name'), '/star_doc', get_lang(conn, 'add_star_doc')],
             16 : [0, '/auth/give/fix', get_lang(conn, 'user_fix')],
+            17 : [get_lang(conn, 'search'), '/recent_block/all/1', get_lang(conn, 'search')],
         }
         
         if num == 1:

@@ -3,7 +3,17 @@ from .func_tool import *
 from typing import Any
 
 class class_do_render_namumark:
-    def __init__(self, conn, doc_name, doc_data, doc_set, lang_data, do_type = 'exter', parameter = {}):
+    def __init__(
+        self,
+        conn,
+        doc_name,
+        doc_data,
+        doc_set,
+        lang_data,
+        do_type = 'exter',
+        parameter = {},
+        parent = None
+    ):
         self.conn = conn
         self.curs = self.conn.cursor()
 
@@ -13,6 +23,7 @@ class class_do_render_namumark:
 
         self.do_type = do_type
         self.parameter = parameter
+        self.parent = parent
 
         self.lang_data = lang_data
         try:
@@ -1401,7 +1412,7 @@ class class_do_render_namumark:
                     self.data_backlink[include_name]['include'] = ''
 
                     # load include db data
-                    self.curs.execute(db_change("select title from data where title = ?"), [include_name])
+                    self.curs.execute(db_change("select data from data where title = ?"), [include_name])
                     db_data = self.curs.fetchall()
                     if db_data:
                         # include link func
@@ -1409,14 +1420,22 @@ class class_do_render_namumark:
                         if include_set_data == 'use':
                             include_link = '<div><a href="/w/' + url_pas(include_name) + '">(' + include_name_org + ')</a></div>'
 
+                        include_data = ''
+                        if self.parent:
+                            include_data_tmp = self.parent(
+                                self.conn,
+                                doc_data = db_data[0][0], 
+                                data_type = 'api_include',
+                                parameter = include_change_list
+                            )
+
+                            include_data = include_data_tmp[0] + '<script>window.addEventListener("DOMContentLoaded", function() {' + include_data_tmp[1] + '});</script>'
+
                         include_sub_name = self.doc_set['doc_include'] + 'opennamu_include_' + str(include_num)
-                        self.render_data_js += '''
-                            opennamu_do_include("''' + self.get_tool_js_safe(include_name) + '''", "''' + self.get_tool_js_safe(self.doc_name) + '''", "''' + self.get_tool_js_safe(include_sub_name) + '''", "''' + self.get_tool_js_safe(include_sub_name) + '''");\n
-                        '''
                         data_name = self.get_tool_data_storage('' + \
                             include_link + \
-                            '<div id="' + include_sub_name + '" style="display: none;">' + urllib.parse.quote(json.dumps(include_change_list)) + '</div>' + \
-                        '', '', match_org)
+                            '<div id="' + include_sub_name + '"></div>' + \
+                        '', include_data, match_org)
                     else:
                         self.data_backlink[include_name]['no'] = ''
 
