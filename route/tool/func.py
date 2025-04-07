@@ -1203,7 +1203,7 @@ def skin_check(conn, set_n = 0):
         return skin
     
 def cache_v():
-    return '.cache_v285'
+    return '.cache_v286'
 
 def wiki_css(data):
     # without_DB
@@ -1236,6 +1236,7 @@ def wiki_css(data):
         data_css += '<script defer src="/views/main_css/js/func/insert_http_warning_text.js' + data_css_ver + '"></script>'
         
         data_css += '<script defer src="/views/main_css/js/func/ie_end_of_life.js' + data_css_ver + '"></script>'
+        data_css += '<script defer src="/views/main_css/js/func/shortcut.js' + data_css_ver + '"></script>'
         data_css += '<script defer src="/views/main_css/js/func/editor.js' + data_css_ver + '"></script>'
         data_css += '<script defer src="/views/main_css/js/func/render.js' + data_css_ver + '"></script>'
         
