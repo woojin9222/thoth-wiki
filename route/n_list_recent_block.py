@@ -13,7 +13,7 @@ async def list_recent_block(user_name = 'Test', tool = 'all', num = 1, why = '')
             sub = '(' + get_lang(conn, 'cidr') + ')'
         elif tool == 'private':
             sub = '(' + get_lang(conn, 'private') + ')'
-        else:
+        elif tool == 'admin':
             sub = '(' + get_lang(conn, 'admin') + ')'
 
         return easy_minify(conn, flask.render_template(skin_check(conn),
