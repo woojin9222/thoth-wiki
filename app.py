@@ -1,6 +1,5 @@
 # Init
 import os
-import re
 import signal
 import atexit
 import logging
@@ -579,13 +578,13 @@ app.route('/auth/ban_regex/<everything:name>', methods = ['POST', 'GET'], defaul
 # /auth/list
 # /auth/list/add/<name>
 # /auth/list/delete/<name>
-app.route('/auth/list')(list_admin_group_2)
+app.route('/auth/list')(list_admin_group)
 app.route('/auth/list/add/<name>', methods = ['POST', 'GET'])(give_admin_groups)
-app.route('/auth/list/delete/<name>', methods = ['POST', 'GET'])(give_delete_admin_group_2)
+app.route('/auth/list/delete/<name>', methods = ['POST', 'GET'])(give_delete_admin_group)
 
 app.route('/auth/give/fix/<user_name>', methods = ['POST', 'GET'])(give_user_fix)
 
-app.route('/app_submit', methods = ['POST', 'GET'])(recent_app_submit_2)
+app.route('/app_submit', methods = ['POST', 'GET'])(recent_app_submit)
 
 # /auth/history
 app.route('/recent_block')(list_recent_block)
@@ -605,9 +604,9 @@ app.route('/recent_block/private/<int:num>', defaults = { 'tool' : 'private' })(
 app.route('/recent_block/ongoing', defaults = { 'tool' : 'ongoing' })(list_recent_block)
 app.route('/recent_block/ongoing/<int:num>', defaults = { 'tool' : 'ongoing' })(list_recent_block)
 
-app.route('/recent_change')(list_recent_change)
-app.route('/recent_changes')(list_recent_change)
-app.route('/recent_change/<int:num>/<set_type>')(list_recent_change)
+app.route('/recent_change', defaults = { 'tool' : 'recent_change' })(list_history)
+app.route('/recent_changes', defaults = { 'tool' : 'recent_change' })(list_history)
+app.route('/recent_change/<int:num>/<set_type>', defaults = { 'tool' : 'recent_change' })(list_history)
 
 app.route('/recent_discuss', defaults = { 'tool' : 'normal' })(list_recent_discuss)
 app.route('/recent_discuss/<int:num>/<tool>')(list_recent_discuss)
@@ -723,7 +722,6 @@ app.route('/user')(user_info)
 app.route('/user/<name>')(user_info)
 
 app.route('/challenge', methods = ['GET', 'POST'])(user_challenge)
-app.route('/rankup')(user_rankup)
 
 app.route('/edit_filter/<name>', methods = ['GET', 'POST'])(user_edit_filter)
 
@@ -743,9 +741,9 @@ app.route('/star_doc/<everything:name>', defaults = { 'tool' : 'star_doc' })(use
 app.route('/star_doc_from/<everything:name>', defaults = { 'tool' : 'star_doc_from' })(user_watch_list_name)
 
 # 개편 보류중 S
-app.route('/change/email', methods = ['POST', 'GET'])(user_setting_email_2)
+app.route('/change/email', methods = ['POST', 'GET'])(user_setting_email)
 app.route('/change/email/delete')(user_setting_email_delete)
-app.route('/change/email/check', methods = ['POST', 'GET'])(user_setting_email_check_2)
+app.route('/change/email/check', methods = ['POST', 'GET'])(user_setting_email_check)
 # 개편 보류중 E
 
 # Func-login
@@ -755,12 +753,12 @@ app.route('/change/email/check', methods = ['POST', 'GET'])(user_setting_email_c
 # register -> register/email -> regiter/email/check with reg_id
 # pass_find -> pass_find/email with find_id
 
-app.route('/login', methods = ['POST', 'GET'])(login_login_2)
-app.route('/login/2fa', methods = ['POST', 'GET'])(login_login_2fa_2)
-app.route('/register', methods = ['POST', 'GET'])(login_register_2)
-app.route('/register/email', methods = ['POST', 'GET'])(login_register_email_2)
-app.route('/register/email/check', methods = ['POST', 'GET'])(login_register_email_check_2)
-app.route('/register/submit', methods = ['POST', 'GET'])(login_register_submit_2)
+app.route('/login', methods = ['POST', 'GET'])(login_login)
+app.route('/login/2fa', methods = ['POST', 'GET'])(login_login_2fa)
+app.route('/register', methods = ['POST', 'GET'])(login_register)
+app.route('/register/email', methods = ['POST', 'GET'])(login_register_email)
+app.route('/register/email/check', methods = ['POST', 'GET'])(login_register_email_check)
+app.route('/register/submit', methods = ['POST', 'GET'])(login_register_submit)
 
 app.route('/login/find')(login_find)
 app.route('/login/find/key', methods = ['POST', 'GET'])(login_find_key)
@@ -832,10 +830,10 @@ app.route('/api/search_page/<int:num>/<everything:name>')(api_func_search_exter)
 app.route('/api/search_data/<everything:name>', defaults = { 'search_type' : 'data' })(api_func_search_exter)
 app.route('/api/search_data_page/<int:num>/<everything:name>', defaults = { 'search_type' : 'data' })(api_func_search_exter)
 
-app.route('/api/recent_change')(api_list_recent_change)
-app.route('/api/recent_changes')(api_list_recent_change)
-app.route('/api/recent_change/<int:limit>')(api_list_recent_change)
-app.route('/api/recent_change/<int:limit>/<set_type>/<int:num>')(api_list_recent_change)
+app.route('/api/recent_change')(api_list_recent_change_exter)
+app.route('/api/recent_changes')(api_list_recent_change_exter)
+app.route('/api/recent_change/<int:limit>')(api_list_recent_change_exter)
+app.route('/api/recent_change/<int:limit>/<set_type>/<int:num>')(api_list_recent_change_exter)
 
 app.route('/api/recent_edit_request')(api_list_recent_edit_request)
 app.route('/api/recent_edit_request/<int:limit>/<set_type>/<int:num>')(api_list_recent_edit_request)
@@ -853,19 +851,19 @@ app.route('/api/image/<everything:name>')(api_image_view)
 
 ## v2 API
 app.route('/api/v2/recent_edit_request/<set_type>/<int:num>', defaults = { 'limit' : 50 })(api_list_recent_edit_request)
-app.route('/api/v2/recent_change/<set_type>/<int:num>', defaults = { 'legacy' : '', 'limit' : 50 })(api_list_recent_change)
+app.route('/api/v2/recent_change/<set_type>/<int:num>', defaults = { 'legacy' : '', 'limit' : 50 })(api_list_recent_change_exter)
 app.route('/api/v2/recent_discuss/<set_type>/<int:num>', defaults = { 'legacy' : '', 'limit' : 50 })(api_list_recent_discuss)
 app.route('/api/v2/recent_block/<set_type>/<int:num>')(api_list_recent_block)
 app.route('/api/v2/recent_block/<set_type>/<int:num>/<everything:why>')(api_list_recent_block)
 app.route('/api/v2/recent_block_user/<set_type>/<int:num>/<user_name>')(api_list_recent_block)
 app.route('/api/v2/recent_block_user/<set_type>/<int:num>/<user_name>/<everything:why>')(api_list_recent_block)
-app.route('/api/v2/list/document/old/<int:num>', defaults = { 'set_type' : 'old' })(api_list_old_page)
-app.route('/api/v2/list/document/new/<int:num>', defaults = { 'set_type' : 'new' })(api_list_old_page)
+app.route('/api/v2/list/document/old/<int:num>', defaults = { 'set_type' : 'old' })(api_list_old_page_exter)
+app.route('/api/v2/list/document/new/<int:num>', defaults = { 'set_type' : 'new' })(api_list_old_page_exter)
 app.route('/api/v2/list/document/<int:num>')(api_list_title_index)
 app.route('/api/v2/list/auth')(api_list_auth)
 app.route('/api/v2/list/markup')(api_list_markup)
 app.route('/api/v2/list/acl/<data_type>')(api_list_acl)
-app.route('/api/v2/history/<int:num>/<set_type>/<everything:doc_name>')(api_list_history)
+app.route('/api/v2/history/<int:num>/<set_type>/<everything:doc_name>')(api_list_history_exter)
 
 app.route('/api/v2/topic/<int:num>/<set_type>/<everything:name>')(api_topic_list)
 
@@ -942,14 +940,18 @@ app.route('/image/<path:name>')(main_view_image)
 app.route('/<regex("[^.]+\\.(?:txt|xml|ico)"):data>')(main_view_file)
 
 app.route('/shutdown', methods = ['POST', 'GET'])(main_sys_shutdown)
-app.route('/restart', methods = ['POST', 'GET'])(main_sys_restart)
-app.route('/update', methods = ['POST', 'GET'])(main_sys_update)
+app.route('/restart', defaults = { 'golang_process' : golang_process }, methods = ['POST', 'GET'])(main_sys_restart)
+app.route('/update', defaults = { 'golang_process' : golang_process }, methods = ['POST', 'GET'])(main_sys_update)
 
 app.errorhandler(404)(main_func_error_404)
 
 def terminate_golang():
     if golang_process.poll() is None:
         golang_process.terminate()
+        try:
+            golang_process.wait(timeout = 5)
+        except subprocess.TimeoutExpired:
+            golang_process.kill()
 
 def signal_handler(signal, frame):
     terminate_golang()

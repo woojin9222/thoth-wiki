@@ -3,7 +3,9 @@ import urllib.request
 
 from .tool.func import *
 
-async def main_sys_update():
+from .main_sys_restart import main_sys_restart_do
+
+async def main_sys_update(golang_process):
     with get_db_connect() as conn:
         curs = conn.cursor()
 
@@ -18,6 +20,13 @@ async def main_sys_update():
             up_data = up_data[0][0] if up_data and up_data[0][0] in ['stable', 'beta', 'dev', 'dont_use'] else 'stable'
 
             print('Update')
+
+            if golang_process.poll() is None:
+                golang_process.terminate()
+                try:
+                    golang_process.wait(timeout = 5)
+                except subprocess.TimeoutExpired:
+                    golang_process.kill()
             
             if platform.system() == 'Linux' or platform.system() == 'Darwin':
                 ok = []
@@ -30,8 +39,8 @@ async def main_sys_update():
                         break
                 else:
                     linux_exe_chmod()
-                    
-                    return redirect(conn, '/restart')
+
+                    await main_sys_restart_do()
                 
                 print('Error : update failed')
             elif platform.system() == 'Windows':
@@ -46,7 +55,7 @@ async def main_sys_update():
                     os.system('rd /s /q opennamu-' + up_data)
                     os.system('del update.zip')
 
-                    return redirect(conn, '/restart')
+                    await main_sys_restart_do()
             
             print('Error : update failed')
 

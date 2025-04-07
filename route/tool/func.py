@@ -30,44 +30,6 @@ if os.path.exists(os.path.join('data', 'version.json')):
     if data_load_ver == version_list['r_ver']:
         data_up_date = 0
 
-if data_up_date == 1:
-    with open(os.path.join('data', 'version.json'), 'w', encoding = 'utf8') as f:
-        f.write(version_list['r_ver'])
-    
-    if platform.system() in ('Linux', 'Darwin', 'Windows'):
-        python_ver = ''
-        python_ver = str(sys.version_info.major) + '.' + str(sys.version_info.minor)
-
-        run_list = [sys.executable, 'python' + python_ver, 'python3', 'python', 'py -' + python_ver]
-        for exe_name in run_list:
-            try:
-                subprocess.check_call([exe_name, "-m", "pip", "install", "--upgrade", "--user", "-r", "requirements.txt"])
-
-                try:
-                    os.execl(exe_name, sys.executable, *sys.argv)
-                except:
-                    pass
-
-                try:
-                    os.execl(exe_name, '"' + sys.executable + '"', *sys.argv)
-                except:
-                    pass
-
-                try:
-                    os.execl(exe_name, os.path.abspath(__file__), *sys.argv)
-                except:
-                    pass
-            except:
-                pass
-        else:
-            print('Error : automatic installation is not supported.')
-            print('Help : try "python3 -m pip install -r requirements.txt"')
-    else:
-        print('Error : automatic installation is not supported.')
-        print('Help : try "python3 -m pip install -r requirements.txt"')
-else:
-    print('PIP check pass')
-
 # Init-Load
 from .func_tool import *
 from .func_render import class_do_render
@@ -172,6 +134,27 @@ async def python_to_golang(func_name, other_set = {}):
                     raise Exception(f"API returned error: {data}")
                 else:
                     return data
+                
+async def opennamu_make_list(left = '', right = '', bottom = '', class_name = ''):
+    data_html = f'<span class="{class_name}">'
+    data_html += '<div class="opennamu_recent_change">'
+    data_html += left
+
+    data_html += '<div style="float: right;">'
+    data_html += right
+    data_html += '</div>'
+
+    data_html += '<div style="clear: both;"></div>'
+
+    if bottom != '':
+        data_html += '<hr>'
+        data_html += bottom
+
+    data_html += '</div>'
+    data_html += '<hr class="main_hr">'
+    data_html += '</span>'
+
+    return data_html
 
 # Func-init
 def get_init_set_list(need = 'all'):
@@ -1155,7 +1138,7 @@ def get_lang_name(conn, tool = ''):
 
 def get_lang(conn, data, safe = 0):
     lang_name = get_lang_name(conn)
-    
+
     if (lang_name + '_' + data) in global_lang_data:
         if safe == 1:
             return global_lang_data[lang_name + '_' + data]
@@ -1166,8 +1149,8 @@ def get_lang(conn, data, safe = 0):
         if (lang_name + '.json') in lang_list:
             lang = orjson.loads(open(os.path.join('lang', lang_name + '.json'), encoding = 'utf8').read())
             
-            for data in lang:
-                global_lang_data[lang_name + '_' + data] = lang[data] 
+            for title in lang:
+                global_lang_data[lang_name + '_' + title] = lang[title] 
         else:
             lang = {}
 
@@ -1253,7 +1236,6 @@ def wiki_css(data):
         data_css += '<script defer src="/views/main_css/js/func/insert_http_warning_text.js' + data_css_ver + '"></script>'
         
         data_css += '<script defer src="/views/main_css/js/func/ie_end_of_life.js' + data_css_ver + '"></script>'
-        data_css += '<script defer src="/views/main_css/js/func/shortcut.js' + data_css_ver + '"></script>'
         data_css += '<script defer src="/views/main_css/js/func/editor.js' + data_css_ver + '"></script>'
         data_css += '<script defer src="/views/main_css/js/func/render.js' + data_css_ver + '"></script>'
         

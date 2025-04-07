@@ -4,7 +4,6 @@ import hashlib
 import flask
 import random
 import string
-import re
 
 import os
 import html
@@ -17,6 +16,11 @@ try:
   import orjson
 except:
   import json as orjson
+  
+try:
+    import regex as re
+except:
+    import re
 
 global_func_some_set = {}
 

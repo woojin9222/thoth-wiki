@@ -10,7 +10,7 @@ async def main_sys_shutdown():
 
             print('Shutdown')
 
-            os._exit(0)
+            sys.exit()
         else:
             return easy_minify(conn, flask.render_template(skin_check(conn),
                 imp = [get_lang(conn, 'wiki_shutdown'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],

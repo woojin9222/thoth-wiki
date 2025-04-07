@@ -1,6 +1,6 @@
 from .tool.func import *
 
-async def list_admin_group_2():
+async def list_admin_group():
     with get_db_connect() as conn:
         curs = conn.cursor()
 
