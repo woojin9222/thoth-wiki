@@ -17,6 +17,11 @@ try:
   import orjson
 except:
   import json as orjson
+  
+try:
+    import regex as re
+except:
+    import re
 
 global_func_some_set = {}
 
