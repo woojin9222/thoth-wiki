@@ -1,29 +1,29 @@
 from .tool.func import *
 
-async def main_sys_restart_do():
+def main_sys_restart_do():
     print('Restart')
+
+    time.sleep(3)
 
     python_ver = ''
     python_ver = str(sys.version_info.major) + '.' + str(sys.version_info.minor)
 
-    run_list = [sys.executable, 'python' + python_ver, 'python3', 'python', 'py -' + python_ver]
+    run_list = [
+        sys.executable,
+        'python' + python_ver,
+        'python3',
+        'python',
+        'py -' + python_ver
+    ]
+
     for exe_name in run_list:
         try:
-            os.execl(exe_name, sys.executable, *sys.argv)
+            subprocess.Popen([exe_name] + sys.argv)
+            break
         except:
-            pass
-
-        try:
-            os.execl(exe_name, '"' + sys.executable + '"', *sys.argv)
-        except:
-            pass
-
-        try:
-            os.execl(exe_name, os.path.abspath(__file__), *sys.argv)
-        except:
-            pass
-    else:
-        return 0
+            continue
+    
+    os._exit(0)
 
 async def main_sys_restart(golang_process):
     with get_db_connect() as conn:
@@ -40,8 +40,8 @@ async def main_sys_restart(golang_process):
                 except subprocess.TimeoutExpired:
                     golang_process.kill()
 
-            if await main_sys_restart_do() == 0:
-                return await re_error(conn, 33)
+            threading.Thread(target = main_sys_restart_do).start()
+            return flask.Response(get_lang(conn, "warning_restart"), status = 200)
         else:
             return easy_minify(conn, flask.render_template(skin_check(conn),
                 imp = [get_lang(conn, 'wiki_restart'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],

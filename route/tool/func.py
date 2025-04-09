@@ -42,7 +42,6 @@ import werkzeug.debug
 import flask
 import asyncio
 import aiohttp
-import hypercorn
 
 import requests
 from PIL import Image

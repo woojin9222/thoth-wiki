@@ -40,7 +40,8 @@ async def main_sys_update(golang_process):
                 else:
                     linux_exe_chmod()
 
-                    await main_sys_restart_do()
+                    threading.Thread(target = main_sys_restart_do).start()
+                    return flask.Response(get_lang(conn, "warning_restart"), status = 200)
                 
                 print('Error : update failed')
             elif platform.system() == 'Windows':
@@ -54,8 +55,9 @@ async def main_sys_update(golang_process):
                 if ok == 0:
                     os.system('rd /s /q opennamu-' + up_data)
                     os.system('del update.zip')
-
-                    await main_sys_restart_do()
+                    
+                    threading.Thread(target = main_sys_restart_do).start()
+                    return flask.Response(get_lang(conn, "warning_restart"), status = 200)
             
             print('Error : update failed')
 
