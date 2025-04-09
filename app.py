@@ -7,6 +7,11 @@ import logging
 from route.tool.func import *
 from route import *
 
+from hypercorn.asyncio import serve
+from hypercorn.config import Config
+
+from werkzeug.middleware.proxy_fix import ProxyFix
+
 args = sys.argv
 run_mode = ''
 if len(args) > 1:
@@ -181,7 +186,7 @@ with get_db_connect(init_mode = True) as conn:
         app.config['DEBUG'] = True
         app.config['ENV'] = 'development'
 
-    log = logging.getLogger('waitress')
+    log = logging.getLogger('hypercorn')
     log.setLevel(logging.ERROR)
 
     app.jinja_env.filters['md5_replace'] = md5_replace
@@ -961,10 +966,10 @@ signal.signal(signal.SIGINT, signal_handler)
 
 atexit.register(terminate_golang)
 
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for = 1, x_proto = 1)
+
 if __name__ == "__main__":
-    waitress.serve(
-        app,
-        host = server_set['host'],
-        port = int(server_set['port']),
-        clear_untrusted_proxy_headers = True
-    )
+    config = Config()
+    config.bind = [server_set['host'] + ":" + server_set['port']]
+
+    asyncio.run(serve(app, config))
