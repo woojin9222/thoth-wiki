@@ -1788,36 +1788,24 @@ async def captcha_post(conn, re_data):
         curs.execute(db_change('select data from other where name = "recaptcha_ver"'))
         rec_ver = curs.fetchall()
         if await captcha_get(conn) != '':
+            url = ''
             if not rec_ver or rec_ver[0][0] in ('', 'v3'):
-                data = requests.post(
-                    'https://www.google.com/recaptcha/api/siteverify',
-                    data = {
-                        "secret" : sec_re[0][0],
-                        "response" : re_data
-                    }
-                )
+                url = 'https://www.google.com/recaptcha/api/siteverify'
             elif rec_ver[0][0] == 'cf':
-                data = requests.post(
-                    'https://challenges.cloudflare.com/turnstile/v0/siteverify',
-                    data = {
-                        "secret" : sec_re[0][0],
-                        "response" : re_data
-                    }
-                )
+                url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
             else:
                 # rec_ver[0][0] == 'h'
-                data = requests.post(
-                    'https://hcaptcha.com/siteverify',
-                    data = {
-                        "secret" : sec_re[0][0],
-                        "response" : re_data
-                    }
-                )
-                
-            if data.status_code == 200:
-                json_data = orjson.loads(data.text)
-                if json_data['success'] != True:
-                    return 1
+                url = 'https://hcaptcha.com/siteverify'
+
+            async with aiohttp.ClientSession() as session:
+                async with session.post(url, data = {
+                    "secret": sec_re[0][0],
+                    "response": re_data
+                }) as res:
+                    if res.status == 200:
+                        json_data = await res.json()
+                        if json_data['success'] != True:
+                            return 1
 
     if 'recapcha_pass' in flask.session:
         if flask.session['recapcha_pass'] > 0:
