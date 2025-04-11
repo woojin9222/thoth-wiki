@@ -30,6 +30,43 @@ if os.path.exists(os.path.join('data', 'version.json')):
     if data_load_ver == version_list['r_ver']:
         data_up_date = 0
 
+if data_up_date == 1:
+    with open(os.path.join('data', 'version.json'), 'w', encoding = 'utf8') as f:
+        f.write(version_list['r_ver'])
+    
+    if platform.system() in ('Linux', 'Darwin', 'Windows'):
+        python_ver = ''
+        python_ver = str(sys.version_info.major) + '.' + str(sys.version_info.minor)
+
+        run_list = [
+            sys.executable,
+            'python' + python_ver,
+            'python3',
+            'python',
+            'py -' + python_ver
+        ]
+        
+        for exe_name in run_list:
+            try:
+                subprocess.check_call([exe_name, "-m", "pip", "install", "--upgrade", "--user", "-r", "requirements-optional.txt"])
+            except:
+                pass
+
+            try:
+                subprocess.check_call([exe_name, "-m", "pip", "install", "--upgrade", "--user", "-r", "requirements.txt"])
+                subprocess.Popen([exe_name] + sys.argv)
+                os._exit(0)
+            except:
+                pass
+        else:
+            print('Error : automatic installation is not supported.')
+            print('Help : try "python3 -m pip install -r requirements.txt"')
+    else:
+        print('Error : automatic installation is not supported.')
+        print('Help : try "python3 -m pip install -r requirements.txt"')
+else:
+    print('PIP check pass')
+
 # Init-Load
 from .func_tool import *
 from .func_render import class_do_render
@@ -42,7 +79,6 @@ import werkzeug.debug
 import flask
 import asyncio
 import aiohttp
-import waitress
 
 import requests
 from PIL import Image
@@ -1789,36 +1825,24 @@ async def captcha_post(conn, re_data):
         curs.execute(db_change('select data from other where name = "recaptcha_ver"'))
         rec_ver = curs.fetchall()
         if await captcha_get(conn) != '':
+            url = ''
             if not rec_ver or rec_ver[0][0] in ('', 'v3'):
-                data = requests.post(
-                    'https://www.google.com/recaptcha/api/siteverify',
-                    data = {
-                        "secret" : sec_re[0][0],
-                        "response" : re_data
-                    }
-                )
+                url = 'https://www.google.com/recaptcha/api/siteverify'
             elif rec_ver[0][0] == 'cf':
-                data = requests.post(
-                    'https://challenges.cloudflare.com/turnstile/v0/siteverify',
-                    data = {
-                        "secret" : sec_re[0][0],
-                        "response" : re_data
-                    }
-                )
+                url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
             else:
                 # rec_ver[0][0] == 'h'
-                data = requests.post(
-                    'https://hcaptcha.com/siteverify',
-                    data = {
-                        "secret" : sec_re[0][0],
-                        "response" : re_data
-                    }
-                )
-                
-            if data.status_code == 200:
-                json_data = orjson.loads(data.text)
-                if json_data['success'] != True:
-                    return 1
+                url = 'https://hcaptcha.com/siteverify'
+
+            async with aiohttp.ClientSession() as session:
+                async with session.post(url, data = {
+                    "secret": sec_re[0][0],
+                    "response": re_data
+                }) as res:
+                    if res.status == 200:
+                        json_data = await res.json()
+                        if json_data['success'] != True:
+                            return 1
 
     if 'recapcha_pass' in flask.session:
         if flask.session['recapcha_pass'] > 0:
