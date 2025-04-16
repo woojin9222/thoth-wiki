@@ -1418,7 +1418,7 @@ class class_do_render_namumark:
                         # include link func
                         include_link = ''
                         if include_set_data == 'use':
-                            include_link = '<div><a href="/w/' + url_pas(include_name) + '">(' + include_name_org + ')</a></div>'
+                            include_link = '<a href="/w/' + url_pas(include_name) + '">(' + include_name_org + ')</a><br>'
 
                         include_data = ''
                         if self.parent:
@@ -1431,16 +1431,11 @@ class class_do_render_namumark:
 
                             include_data = include_data_tmp[0] + '<script>window.addEventListener("DOMContentLoaded", function() {' + include_data_tmp[1] + '});</script>'
 
-                        include_sub_name = self.doc_set['doc_include'] + 'opennamu_include_' + str(include_num)
-                        data_name = self.get_tool_data_storage('' + \
-                            include_link + \
-                            '<div id="' + include_sub_name + '"></div>' + \
-                        '', include_data, match_org)
+                        data_name = self.get_tool_data_storage(include_link + include_data, '', match_org)
                     else:
                         self.data_backlink[include_name]['no'] = ''
 
-                        include_link = '<div><a class="opennamu_not_exist_link" href="/w/' + url_pas(include_name) + '">(' + include_name_org + ')</a></div>'
-
+                        include_link = '<a class="opennamu_not_exist_link" href="/w/' + url_pas(include_name) + '">(' + include_name_org + ')</a>'
                         data_name = self.get_tool_data_storage(include_link, '', match_org)
 
                     self.render_data = re.sub(include_regex, '<' + data_name + '></' + data_name + '>' + match[1], self.render_data, 1)
@@ -2554,6 +2549,9 @@ class class_do_render_namumark:
         self.render_data = re.sub(r'<a fn_target="([^"]+)"', do_render_last_footnote, self.render_data)
 
         self.render_data_js += '''
+            document.querySelectorAll('details').forEach((el) => {
+                new Accordion(el);
+            });
             if(window.location.hash !== '' && document.getElementById(window.location.hash.replace(/^#/, ''))) {
                 document.getElementById(window.location.hash.replace(/^#/, '')).focus();
             }\n
