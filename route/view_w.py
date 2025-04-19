@@ -190,7 +190,7 @@ async def view_w(name = 'Test', do_type = ''):
         else:
             end_data = ''
 
-        await api_w_page_view(name)
+        asyncio.create_task(api_w_page_view(name))
 
         curs.execute(db_change("select data from data where title = ?"), [name])
         data = curs.fetchall()
