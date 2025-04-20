@@ -39,6 +39,10 @@ async def main_sys_restart(golang_process):
                     golang_process.wait(timeout = 5)
                 except subprocess.TimeoutExpired:
                     golang_process.kill()
+                    try:
+                        golang_process.wait(timeout = 5)
+                    except subprocess.TimeoutExpired:
+                        print('Golang process not terminated properly.')
 
             threading.Thread(target = main_sys_restart_do).start()
             return flask.Response(get_lang(conn, "warning_restart"), status = 200)

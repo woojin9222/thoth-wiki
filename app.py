@@ -22,7 +22,7 @@ if len(args) > 1:
 
 # Init-Version
 with open('version.json', encoding = 'utf8') as file_data:
-    version_list = orjson.loads(file_data.read())
+    version_list = json.loads(file_data.read())
 
 # Init-DB
 data_db_set = class_check_json()
@@ -956,6 +956,10 @@ def terminate_golang():
             golang_process.wait(timeout = 5)
         except subprocess.TimeoutExpired:
             golang_process.kill()
+            try:
+                golang_process.wait(timeout = 5)
+            except subprocess.TimeoutExpired:
+                print('Golang process not terminated properly.')
 
 def signal_handler(signal, frame):
     terminate_golang()
