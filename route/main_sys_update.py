@@ -20,13 +20,17 @@ async def main_sys_update(golang_process):
             up_data = up_data[0][0] if up_data and up_data[0][0] in ['stable', 'beta', 'dev', 'dont_use'] else 'stable'
 
             print('Update')
-
+            
             if golang_process.poll() is None:
                 golang_process.terminate()
                 try:
                     golang_process.wait(timeout = 5)
                 except subprocess.TimeoutExpired:
                     golang_process.kill()
+                    try:
+                        golang_process.wait(timeout = 5)
+                    except subprocess.TimeoutExpired:
+                        print('Golang process not terminated properly.')
             
             if platform.system() == 'Linux' or platform.system() == 'Darwin':
                 ok = []

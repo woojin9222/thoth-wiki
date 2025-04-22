@@ -291,7 +291,7 @@ class class_check_json:
             if os.path.exists(os.path.join('data', 'set.json')):
                 db_set_list = ['db', 'db_type']
                 with open(os.path.join('data', 'set.json'), encoding = 'utf8') as file_data:
-                    set_data = orjson.loads(file_data.read())
+                    set_data = json.loads(file_data.read())
 
                 for i in db_set_list:
                     if not i in set_data:
@@ -340,7 +340,7 @@ class class_check_json:
         if os.path.exists(os.path.join('data', 'mysql.json')):
             db_set_list = ['user', 'password', 'host', 'port']
             with open(os.path.join('data', 'mysql.json'), encoding = 'utf8') as file_data:
-                set_data = orjson.loads(file_data.read())
+                set_data = json.loads(file_data.read())
 
             for i in db_set_list:
                 if not i in set_data:
@@ -477,7 +477,7 @@ async def update(conn, ver_num, set_data):
                 curs.execute(db_change("update other set data = '' where name = 'sec_re'"))
     
     if ver_num < 3172800 and set_data['type'] == 'mysql':
-        get_data_mysql = orjson.loads(open('data/mysql.json', encoding = 'utf8').read())
+        get_data_mysql = json.loads(open('data/mysql.json', encoding = 'utf8').read())
         
         with open('data/mysql.json', 'w') as f:
             f.write('{ "user" : "' + get_data_mysql['user'] + '", "password" : "' + get_data_mysql['password'] + '", "host" : "localhost" }')
@@ -1183,7 +1183,7 @@ def get_lang(conn, data, safe = 0):
     else:
         lang_list = os.listdir('lang')
         if (lang_name + '.json') in lang_list:
-            lang = orjson.loads(open(os.path.join('lang', lang_name + '.json'), encoding = 'utf8').read())
+            lang = json.loads(open(os.path.join('lang', lang_name + '.json'), encoding = 'utf8').read())
             
             for title in lang:
                 global_lang_data[lang_name + '_' + title] = lang[title] 
