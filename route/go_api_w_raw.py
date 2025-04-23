@@ -5,7 +5,6 @@ async def api_w_raw(name = 'Test', rev = '', exist_check = ''):
     other_set["name"] = name
     other_set["rev"] = str(rev)
     other_set["exist_check"] = exist_check
-    other_set["ip"] = ip_check()
 
     return await python_to_golang(sys._getframe().f_code.co_name, other_set)
 

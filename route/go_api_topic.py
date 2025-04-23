@@ -130,7 +130,6 @@ async def api_topic(topic_num = 1, tool = 'normal', s_num = '', e_num = ''):
             other_set["tool"] = tool
             other_set["s_num"] = str(s_num)
             other_set["e_num"] = str(e_num)
-            other_set["ip"] = ip_check()
 
             return flask.jsonify(await python_to_golang(sys._getframe().f_code.co_name, other_set))
         else:

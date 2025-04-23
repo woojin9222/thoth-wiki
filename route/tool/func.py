@@ -160,7 +160,7 @@ async def python_to_golang(func_name, other_set = {}):
         other_set["ip"] = "127.0.0.1"
 
     port_data = global_some_set_do("setup_golang_port")
-    
+
     async with aiohttp.ClientSession() as session:
         while 1:
             async with session.post('http://localhost:' + port_data + '/', data = json.dumps(other_set)) as res:
@@ -1955,7 +1955,6 @@ async def ban_check(ip = None, tool = ''):
 
 async def ip_pas(raw_ip):
     other_set = {}
-    other_set["ip"] = ip_check()
     
     return_data = 0
     if type(raw_ip) != type([]):

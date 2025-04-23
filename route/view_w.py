@@ -96,7 +96,7 @@ async def view_w(name = 'Test', do_type = ''):
                 user_name = html.escape(match.group(1))
             
             user_doc = ''
-            
+
             # S admin or owner 특수 틀 추가
             if await acl_check(tool = 'all_admin_auth', ip = user_name) != 1:
                 if await acl_check(tool = 'owner_auth', ip = user_name) != 1:

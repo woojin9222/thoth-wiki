@@ -5,7 +5,6 @@ async def api_list_history(num = 1, set_type = 'normal', doc_name = 'Test'):
     other_set["num"] = str(num)
     other_set["doc_name"] = doc_name
     other_set["set_type"] = set_type
-    other_set["ip"] = ip_check()
     
     return await python_to_golang(sys._getframe().f_code.co_name, other_set)
 
