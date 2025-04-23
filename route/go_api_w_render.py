@@ -39,7 +39,7 @@ async def api_w_render(name = '', tool = '', request_method = '', request_data =
                 data_type = 'api_thread'
 
             if markup in ('', 'namumark', 'namumark_beta') and data_option != '':
-                data_option = json.loads(data_option)
+                data_option = json_loads(data_option)
 
                 # remove end br
                 data_org = re.sub('^\n+', '', data_org)

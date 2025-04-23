@@ -22,7 +22,7 @@ if len(args) > 1:
 
 # Init-Version
 with open('version.json', encoding = 'utf8') as file_data:
-    version_list = json.loads(file_data.read())
+    version_list = json_loads(file_data.read())
 
 # Init-DB
 data_db_set = class_check_json()
@@ -270,13 +270,13 @@ async def golang_process_check():
 
             other_set = {
                 "url" : "test",
-                "data" : json.dumps(other_set_temp),
+                "data" : json_dumps(other_set_temp),
                 "session" : "{}",
                 "cookie" : "",
                 "ip" : "127.0.0.1"
             }
 
-            response = requests.post('http://localhost:' + server_set["golang_port"] + '/', data = json.dumps(other_set))
+            response = requests.post('http://localhost:' + server_set["golang_port"] + '/', data = json_dumps(other_set))
             if response.status_code == 200:
                 print('Golang turn on')
                 break

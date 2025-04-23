@@ -33,7 +33,7 @@ async def recent_app_submit():
                 '''
 
                 for application in db_data:
-                    application = json.loads(application[0])
+                    application = json_loads(application[0])
 
                     if 'question' in application:
                         question = html.escape(application['question'])
@@ -101,7 +101,7 @@ async def recent_app_submit():
                 if not application:
                     return await re_error(conn, 26)
                 else:
-                    application = json.loads(application[0][0])
+                    application = json_loads(application[0][0])
 
                 add_user(conn, application['id'], application['pw'], application['email'], application['encode'])
 

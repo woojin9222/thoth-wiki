@@ -13,9 +13,18 @@ import time
 import threading
 
 try:
-    import ujson as json
-except:
+    import orjson
+
+    def json_dumps(obj):
+        return orjson.dumps(obj).decode("utf-8")
+
+    def json_loads(s):
+        return orjson.loads(s if isinstance(s, bytes) else s.encode("utf-8"))
+except ImportError:
     import json
+
+    json_dumps = json.dumps
+    json_loads = json.loads
   
 try:
     import regex as re
