@@ -6,7 +6,6 @@ async def api_func_email():
         func_name += '_post'
 
         other_set = {}
-        other_set["ip"] = ip_check()
         other_set["who"] = flask.request.form.get('email', '')
         other_set["title"] = flask.request.form.get('title', '')
         other_set["data"] = flask.request.form.get('data', '')

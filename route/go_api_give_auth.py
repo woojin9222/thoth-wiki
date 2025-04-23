@@ -6,7 +6,6 @@ async def api_give_auth():
         func_name += '_patch'
 
         other_set = {}
-        other_set["ip"] = ip_check()
         other_set["user_name"] = flask.request.form.get('user_name', '')
         other_set['auth'] = flask.request.form.get('auth', '')
         other_set['change_auth'] = flask.request.form.get('change_auth', '')

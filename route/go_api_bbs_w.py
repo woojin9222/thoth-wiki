@@ -2,7 +2,6 @@ from .tool.func import *
 
 async def api_bbs_w(sub_code = '', legacy = 'on'):
     other_set = {}
-    other_set['ip'] = ip_check()
     other_set["legacy"] = legacy
     other_set['sub_code'] = sub_code
 

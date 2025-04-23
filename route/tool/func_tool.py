@@ -13,9 +13,9 @@ import time
 import threading
 
 try:
-  import orjson as json
+    import ujson as json
 except:
-  import json
+    import json
   
 try:
     import regex as re
