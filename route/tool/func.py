@@ -13,9 +13,11 @@ import email.mime.text
 import email.utils
 import email.header
 
+from .func_tool import *
+
 # Init-Version
 with open('version.json', encoding = 'utf8') as file_data:
-    version_list = json.loads(file_data.read())
+    version_list = json_loads(file_data.read())
 
 print('Version : ' + version_list['r_ver'])
 print('DB set version : ' + version_list['c_ver'])
@@ -68,7 +70,6 @@ else:
     print('PIP check pass')
 
 # Init-Load
-from .func_tool import *
 from .func_render import class_do_render
 
 from diff_match_patch import diff_match_patch
@@ -142,11 +143,11 @@ def global_some_set_do(set_name, data = None):
 async def python_to_golang(func_name, other_set = {}):    
     other_set = {
         "url" : func_name,
-        "data" : json.dumps(other_set)
+        "data" : json_dumps(other_set)
     }
 
     if flask.has_request_context():
-        other_set["session"] = json.dumps(dict(flask.session))
+        other_set["session"] = json_dumps(dict(flask.session))
 
         if "Cookie" in flask.request.headers:
             other_set["cookie"] = flask.request.headers["Cookie"]
@@ -163,7 +164,7 @@ async def python_to_golang(func_name, other_set = {}):
 
     async with aiohttp.ClientSession() as session:
         while 1:
-            async with session.post('http://localhost:' + port_data + '/', data = json.dumps(other_set)) as res:
+            async with session.post('http://localhost:' + port_data + '/', data = json_dumps(other_set)) as res:
                 data = await res.json()
 
                 if "response" in data and data["response"] == "error":
@@ -291,7 +292,7 @@ class class_check_json:
             if os.path.exists(os.path.join('data', 'set.json')):
                 db_set_list = ['db', 'db_type']
                 with open(os.path.join('data', 'set.json'), encoding = 'utf8') as file_data:
-                    set_data = json.loads(file_data.read())
+                    set_data = json_loads(file_data.read())
 
                 for i in db_set_list:
                     if not i in set_data:
@@ -325,7 +326,7 @@ class class_check_json:
                     set_data['db'] = data_get
 
                 with open(os.path.join('data', 'set.json'), 'w', encoding = 'utf8') as f:
-                    f.write(json.dumps(set_data))
+                    f.write(json_dumps(set_data))
 
         print('DB name : ' + set_data['db'])
         print('DB type : ' + set_data['db_type'])
@@ -340,7 +341,7 @@ class class_check_json:
         if os.path.exists(os.path.join('data', 'mysql.json')):
             db_set_list = ['user', 'password', 'host', 'port']
             with open(os.path.join('data', 'mysql.json'), encoding = 'utf8') as file_data:
-                set_data = json.loads(file_data.read())
+                set_data = json_loads(file_data.read())
 
             for i in db_set_list:
                 if not i in set_data:
@@ -370,7 +371,7 @@ class class_check_json:
                 set_data_mysql['port'] = '3306'
 
             with open(os.path.join('data', 'mysql.json'), 'w', encoding = 'utf8') as f:
-                f.write(json.dumps(set_data_mysql))
+                f.write(json_dumps(set_data_mysql))
 
         data_db_set['mysql_user'] = set_data_mysql['user']
         data_db_set['mysql_pw'] = set_data_mysql['password']
@@ -477,7 +478,7 @@ async def update(conn, ver_num, set_data):
                 curs.execute(db_change("update other set data = '' where name = 'sec_re'"))
     
     if ver_num < 3172800 and set_data['type'] == 'mysql':
-        get_data_mysql = json.loads(open('data/mysql.json', encoding = 'utf8').read())
+        get_data_mysql = json_loads(open('data/mysql.json', encoding = 'utf8').read())
         
         with open('data/mysql.json', 'w') as f:
             f.write('{ "user" : "' + get_data_mysql['user'] + '", "password" : "' + get_data_mysql['password'] + '", "host" : "localhost" }')
@@ -564,7 +565,7 @@ async def update(conn, ver_num, set_data):
             sql_data['ua'] = i[7]
             sql_data['email'] = i[8]
             
-            curs.execute(db_change("insert into user_set (name, id, data) values (?, ?, ?)"), ['application', i[0], json.dumps(sql_data)])
+            curs.execute(db_change("insert into user_set (name, id, data) values (?, ?, ?)"), ['application', i[0], json_dumps(sql_data)])
     
     if ver_num < 3500105:
         curs.execute(db_change('delete from acl where title like "file:%" and data = "admin" and type like "decu%"'))
@@ -1183,7 +1184,7 @@ def get_lang(conn, data, safe = 0):
     else:
         lang_list = os.listdir('lang')
         if (lang_name + '.json') in lang_list:
-            lang = json.loads(open(os.path.join('lang', lang_name + '.json'), encoding = 'utf8').read())
+            lang = json_loads(open(os.path.join('lang', lang_name + '.json'), encoding = 'utf8').read())
             
             for title in lang:
                 global_lang_data[lang_name + '_' + title] = lang[title] 
