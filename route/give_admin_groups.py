@@ -101,7 +101,7 @@ async def give_admin_groups(name = 'test'):
                     choice = for_a[2]
 
                 data += '' + \
-                    '<li class="opennamu_list_1" style="margin-left: ' + str(int(for_a[0]) * 20) + 'px;">' + \
+                    '<li class="opennamu_list_1" style="margin-left: ' + str((int(for_a[0]) - 1) * 20) + 'px;">' + \
                         choice + \
                     '</li>'
                 ''
