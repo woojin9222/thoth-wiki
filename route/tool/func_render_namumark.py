@@ -1860,7 +1860,7 @@ class class_do_render_namumark:
                 table_data_end = '<table class="' + table_parameter['class'] + '" style="' + table_parameter['table'] + '">' + table_caption + table_data_end + '</table>'
                 table_data_end = '<div class="table_safe" style="' + table_parameter['div'] + '">' + table_data_end + '</div>'
 
-                self.render_data = re.sub(table_regex, lambda x : ('\n<front_br>' + table_data_end + '\n'), self.render_data, 1)
+                self.render_data = re.sub(table_regex, lambda x : ('\n' + table_data_end + '\n'), self.render_data, 1)
 
             table_count_all -= 1
     
