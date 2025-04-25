@@ -2340,7 +2340,7 @@ class class_do_render_namumark:
                     if list_len in list_style:
                         list_style_data = list_style[list_len]
 
-                    return '<li style="margin-left: ' + str(list_len * 20) + 'px;" class="' + list_style_data + '">' + list_data + '</li>'
+                    return '<li style="margin-left: ' + str((list_len - 1) * 20) + 'px;" class="' + list_style_data + '">' + list_data + '</li>'
                 else:
                     list_type = match.group(2)
 
