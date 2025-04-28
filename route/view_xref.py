@@ -51,7 +51,7 @@ async def view_xref(name = 'Test', xref_type = 1, num = 1):
             div += get_next_page_bottom(conn, '/xref_page/{}/' + url_pas(name), num, data_list)
 
         return easy_minify(conn, flask.render_template(skin_check(conn),
-            imp = [name, wiki_set(conn), await wiki_custom(conn), wiki_css([data_sub, 0])],
+            imp = [name, await wiki_set(), await wiki_custom(conn), wiki_css([data_sub, 0])],
             data = div,
             menu = [['w/' + url_pas(name), get_lang(conn, 'return')], ['xref_reset/' + url_pas(name), get_lang(conn, 'reset_backlink')]]
         ))

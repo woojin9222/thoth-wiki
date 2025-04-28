@@ -90,7 +90,7 @@ async def topic_tool_setting(topic_num = 1):
             agree_check = 'checked="checked"' if rd_d[0][1] == 'O' else ''
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'topic_setting'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'topic_setting'), await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
                 data = render_simple_set(conn, '''
                     <form method="post">
                         <h2>''' + get_lang(conn, 'topic_progress') + '''</h2>

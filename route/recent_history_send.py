@@ -28,7 +28,7 @@ async def recent_history_send(name = 'Test', rev = 1):
                 send = send[0][0]
 
                 return easy_minify(conn, flask.render_template(skin_check(conn),
-                    imp = [name, wiki_set(conn), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'send_edit') + ') (r' + num + ')', 0])],
+                    imp = [name, await wiki_set(), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'send_edit') + ') (r' + num + ')', 0])],
                     data = '''
                         <form method="post">
                             <span>''' + get_lang(conn, 'delete_warning') + '''</span>

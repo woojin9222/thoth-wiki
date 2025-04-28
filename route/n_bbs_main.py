@@ -3,7 +3,7 @@ from .tool.func import *
 async def bbs_main():
     with get_db_connect() as conn:
         return easy_minify(conn, flask.render_template(skin_check(conn),
-            imp = [get_lang(conn, 'bbs_main'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+            imp = [get_lang(conn, 'bbs_main'), await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
             data = '' + \
                 '<div id="opennamu_bbs_main"></div>' + \
                 '<script defer src="/views/main_css/js/route/bbs_main.js' + cache_v() + '"></script>' + \

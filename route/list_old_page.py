@@ -26,7 +26,7 @@ async def list_old_page(num = 1, set_type = 'old'):
         data_html += get_next_page_bottom(conn, f'/list/document/{set_type}/{{}}', int(num), data)
 
         return easy_minify(conn, flask.render_template(skin_check(conn),
-            imp = [title, wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+            imp = [title, await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
             data = data_html,
             menu = [['other', get_lang(conn, 'return')]]
         ))

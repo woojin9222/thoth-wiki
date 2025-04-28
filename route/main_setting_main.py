@@ -200,7 +200,7 @@ async def main_setting_main():
             '''
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'main_setting'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'main_setting'), await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
                 data = render_simple_set(conn, '''
                     <form method="post">
                         ''' + basic_set + '''

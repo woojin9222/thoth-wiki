@@ -254,7 +254,7 @@ async def view_set(name = 'Test', multiple = False):
                 save_button += ' <button type="button" onclick="w_set_reset();" ' + check_ok + '>' + get_lang(conn, 'reset') + '</button>'
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [title, wiki_set(conn), await wiki_custom(conn), wiki_css([sub, 0])],
+                imp = [title, await wiki_set(), await wiki_custom(conn), wiki_css([sub, 0])],
                 data = '''
                     <form method="post">
                         <script defer src="/views/main_css/js/route/w_set.js''' + cache_v() + '''"></script>

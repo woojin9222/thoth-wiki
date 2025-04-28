@@ -910,28 +910,6 @@ def get_next_page_bottom(conn, link, num, page, end = 50):
 
     return list_data
 
-def next_fix(conn, link, num, page, end = 50):
-    list_data = ''
-
-    if num == 1:
-        if len(page) == end:
-            list_data += '' + \
-                '<hr class="main_hr">' + \
-                '<a href="' + link + str(num + 1) + '">(' + get_lang(conn, 'next') + ')</a>' + \
-            ''
-    elif len(page) != end:
-        list_data += '' + \
-            '<hr class="main_hr">' + \
-            '<a href="' + link + str(num - 1) + '">(' + get_lang(conn, 'previous') + ')</a>' + \
-        ''
-    else:
-        list_data += '' + \
-            '<hr class="main_hr">' + \
-            '<a href="' + link + str(num - 1) + '">(' + get_lang(conn, 'previous') + ')</a> <a href="' + link + str(num + 1) + '">(' + get_lang(conn, 'next') + ')</a>' + \
-        ''
-
-    return list_data
-
 def leng_check(A, B):
     # B -> new
     # A -> old
@@ -1307,83 +1285,13 @@ def wiki_css(data):
 def cut_100(data):
     return ''
 
-def wiki_set(conn):
-    curs = conn.cursor()
+async def wiki_set():
+    other_set = {}
 
-    ip = ip_check()
-    skin_name = skin_check(conn, 1)
-    data_list = []
+    data = await python_to_golang('api_func_wiki_set', other_set)
+    print(data)
 
-    curs.execute(db_change('select data from other where name = ?'), ['name'])
-    db_data = curs.fetchall()
-    data_list += [db_data[0][0]] if db_data and db_data[0][0] != '' else ['Wiki']
-
-    curs.execute(db_change('select data from other where name = ?'), ['license'])
-    db_data = curs.fetchall()
-    data_list += [db_data[0][0]] if db_data and db_data[0][0] != '' else ['']
-
-    data_list += ['', '']
-
-    curs.execute(db_change('select data from other where name = "logo" and coverage = ?'), [skin_name])
-    db_data = curs.fetchall()
-    if db_data and db_data[0][0] != '':
-        data_list += [db_data[0][0]]
-    else:
-        curs.execute(db_change('select data from other where name = "logo" and coverage = ""'))
-        db_data = curs.fetchall()
-        data_list += [db_data[0][0]] if db_data and db_data[0][0] != '' else [data_list[0]]
-
-    head_data = ''
-
-    curs.execute(db_change("select data from other where name = 'head' and coverage = ''"))
-    db_data = curs.fetchall()
-    head_data += db_data[0][0] if db_data and db_data[0][0] != '' else ''
-
-    curs.execute(db_change("select data from other where name = 'head' and coverage = ?"), [skin_name])
-    db_data = curs.fetchall()
-    head_data += db_data[0][0] if db_data and db_data[0][0] != '' else ''
-
-    darkmode = flask.request.cookies.get('main_css_darkmode', '0')
-    if darkmode == '1':
-        curs.execute(db_change("select data from other where name = 'head' and coverage = ?"), [skin_name + '-cssdark'])
-        db_data = curs.fetchall()
-        head_data += db_data[0][0] if db_data and db_data[0][0] != '' else ''
-
-    data_list += [head_data]
-
-    curs.execute(db_change("select data from other where name = 'top_menu'"))
-    db_data = curs.fetchall()
-    db_data = db_data[0][0] if db_data else ''
-    db_data = db_data.replace('\r', '')
-    
-    curs.execute(db_change("select data from user_set where name = 'top_menu' and id = ?"), [ip])
-    db_data_2 = curs.fetchall()
-    db_data_2 = db_data_2[0][0] if db_data_2 else ''
-    db_data_2 = db_data_2.replace('\r', '')
-    if db_data_2 != '' and db_data != '':
-        db_data += '\n' + db_data_2
-    elif db_data_2 != '':
-        db_data += db_data_2
-    
-    if db_data != '':
-        db_data = db_data.split('\n')
-    
-        if len(db_data) % 2 != 0:
-            db_data += ['']
-
-        db_data = [[db_data[for_a], db_data[for_a + 1]] for for_a in range(0, len(db_data), 2)]
-
-    data_list += [db_data]
-
-    template_var = []
-    for for_a in range(1, 4):
-        curs.execute(db_change("select data from other where name = ?"), ['template_var_' + str(for_a)])
-        db_data = curs.fetchall()
-        template_var += [db_data[0][0]] if db_data else ['']
-
-    data_list += [template_var]
-
-    return data_list
+    return data["data"]
 
 async def wiki_custom(conn):
     curs = conn.cursor()
@@ -1462,7 +1370,7 @@ async def wiki_custom(conn):
         ip,
         user_topic,
         split_path,
-        level_check(conn, ip)
+        await level_check(ip)
     ]
 
 def load_skin(conn, data = '', set_n = 0, default = 0):
@@ -1703,7 +1611,7 @@ def render_simple_set(conn, data):
     return data
 
 # Func-request
-def send_email(conn, who, title, data):
+async def send_email(conn, who, title, data):
     curs = conn.cursor()
 
     curs.execute(db_change('' + \
@@ -1742,7 +1650,7 @@ def send_email(conn, who, title, data):
         smtp = smtplib.SMTP_SSL(smtp_server, smtp_port)
         
     domain = load_domain(conn)
-    wiki_name = wiki_set(conn)[0]
+    wiki_name = (await wiki_set())[0]
     
     msg = email.mime.text.MIMEText(data)
 
@@ -1894,30 +1802,15 @@ def do_user_name_check(conn, user_name):
     
     return 0
 
-def level_check(conn, ip = ''):
-    curs = conn.cursor()
+async def level_check(ip = ''):
+    ip = ip_check() if ip == '' else ip
 
-    if ip == '':
-        ip = ip_check()
+    other_set = {}
+    other_set['ip'] = ip
 
-    level = '0'
-    exp = '0'
-    max_exp = '0'
+    data = await python_to_golang('api_func_level', other_set)
 
-    curs.execute(db_change("select data from user_set where id = ? and name = 'level'"), [ip])
-    db_data = curs.fetchall()
-    if db_data:
-        level = db_data[0][0]
-
-    curs.execute(db_change("select data from user_set where id = ? and name = 'experience'"), [ip])
-    db_data = curs.fetchall()
-    if db_data:
-        exp = db_data[0][0]
-
-    if exp != '0':
-        max_exp = str(500 + (int(level) * 50))
-
-    return [level, exp, max_exp]
+    return data["data"]
 
 async def acl_check(name = '', tool = '', topic_num = '', ip = '', memo = ''):
     ip = ip_check() if ip == '' else ip
@@ -2329,7 +2222,7 @@ async def re_error(conn, data):
             end = '<ul><li>' + get_lang(conn, 'authority_error') + '</li></ul>'
 
         return easy_minify(conn, flask.render_template(skin_check(conn),
-            imp = [get_lang(conn, 'error'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+            imp = [get_lang(conn, 'error'), await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
             data = '<h2>' + get_lang(conn, 'error') + '</h2>' + end,
             menu = 0
         )), 401
@@ -2469,7 +2362,7 @@ async def re_error(conn, data):
                 data += '<br>' + get_lang(conn, 'error_skin_set_old') + ' <a href="/skin_set">(' + get_lang(conn, 'go') + ')</a>'
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'skin_set'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'skin_set'), await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
                 data = '' + \
                     '<div id="main_skin_set">' + \
                         '<h2>' + get_lang(conn, 'error') + '</h2>' + \
@@ -2482,7 +2375,7 @@ async def re_error(conn, data):
             ))
         else:
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [title, wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+                imp = [title, await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
                 data = '' + \
                     '<h2>' + sub_title + '</h2>' + \
                     '<ul>' + \

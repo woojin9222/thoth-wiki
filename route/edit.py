@@ -361,7 +361,7 @@ async def edit(name = 'Test', section = 0, do_type = ''):
             sub_title = '(' + get_lang(conn, 'edit_request') + ')' if edit_req_mode == 1 else '(' + get_lang(conn, 'edit') + ')'
 
             return easy_minify(conn, flask.render_template(skin_check(conn), 
-                imp = [name, wiki_set(conn), await wiki_custom(conn), wiki_css([sub_title + sub_menu, 0])],
+                imp = [name, await wiki_set(), await wiki_custom(conn), wiki_css([sub_title + sub_menu, 0])],
                 data = editor_top_text + '''
                     <form method="post">
                         <textarea style="display: none;" name="doc_section_data_where">''' + data_section_where + '''</textarea>

@@ -41,7 +41,7 @@ async def login_find_email(tool):
         
             curs.execute(db_change('select data from other where name = "email_title"'))
             sql_d = curs.fetchall()
-            t_text = html.escape(sql_d[0][0]) if sql_d and sql_d[0][0] != '' else (wiki_set(conn)[0] + ' key')
+            t_text = html.escape(sql_d[0][0]) if sql_d and sql_d[0][0] != '' else ((await wiki_set())[0] + ' key')
         
             curs.execute(db_change('select data from other where name = "email_text"'))
             sql_d = curs.fetchall()
@@ -52,7 +52,7 @@ async def login_find_email(tool):
                 if not curs.fetchall():
                     return await re_error(conn, 12)
                     
-                if send_email(conn, user_email, t_text, i_text) == 0:
+                if await send_email(conn, user_email, t_text, i_text) == 0:
                     return await re_error(conn, 18)
         
                 return redirect(conn, '/pass_find/email')
@@ -64,7 +64,7 @@ async def login_find_email(tool):
         
                     return await re_error(conn, 35)
                 
-                if send_email(conn, user_email, t_text, i_text) == 0:
+                if await send_email(conn, user_email, t_text, i_text) == 0:
                     for i in re_set_list:
                         flask.session.pop(i, None)
         
@@ -80,7 +80,7 @@ async def login_find_email(tool):
                 b_text = (sql_d[0][0] + '<hr class="main_hr">') if sql_d and sql_d[0][0] != '' else ''
         
                 return easy_minify(conn, flask.render_template(skin_check(conn),
-                    imp = [get_lang(conn, 'password_search'), wiki_set(conn), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'email') + ')', 0])],
+                    imp = [get_lang(conn, 'password_search'), await wiki_set(), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'email') + ')', 0])],
                     data = b_text + '''
                         <form method="post">
                             <input placeholder="''' + get_lang(conn, 'id') + '''" name="id" type="text">
@@ -101,7 +101,7 @@ async def login_find_email(tool):
                 b_text = (sql_d[0][0] + '<hr class="main_hr">') if sql_d and sql_d[0][0] != '' else ''
         
                 return easy_minify(conn, flask.render_template(skin_check(conn),
-                    imp = [get_lang(conn, 'email'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+                    imp = [get_lang(conn, 'email'), await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
                     data = '''
                         <a href="/filter/email_filter">(''' + get_lang(conn, 'email_filter_list') + ''')</a>
                         <hr class="main_hr">

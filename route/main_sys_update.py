@@ -68,7 +68,7 @@ async def main_sys_update(golang_process):
             return await re_error(conn, 34)
         else:
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'update'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'update'), await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
                 data = get_lang(conn, 'update_warning') + '''
                     <hr class="main_hr">
                     <ul>

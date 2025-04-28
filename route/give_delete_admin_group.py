@@ -22,7 +22,7 @@ async def give_delete_admin_group(name = 'test'):
                 return await re_error(conn, 47)
         else:
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, "delete_admin_group"), wiki_set(conn), await wiki_custom(conn), wiki_css(['(' + name + ')', 0])],
+                imp = [get_lang(conn, "delete_admin_group"), await wiki_set(), await wiki_custom(conn), wiki_css(['(' + name + ')', 0])],
                 data = '' + \
                     '<form method="post">' + \
                         '<button type="submit">' + get_lang(conn, 'delete') + '</button>' + \

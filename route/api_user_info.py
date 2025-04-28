@@ -26,7 +26,7 @@ async def api_user_info(user_name = ''):
         else:
             data_result['auth_date'] = '0'
 
-        level_data = level_check(conn, user_name)
+        level_data = await level_check(user_name)
         data_result['level'] = level_data[0]
         data_result['exp'] = level_data[1]
         data_result['max_exp'] = level_data[2]

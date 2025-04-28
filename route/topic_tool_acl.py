@@ -80,7 +80,7 @@ async def topic_tool_acl(topic_num = 1):
                 acl_html_list_view += '<option value="' + data_list + '" ' + check + '>' + (data_list if data_list != '' else 'normal') + '</option>'
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'topic_acl_setting'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'topic_acl_setting'), await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
                 data = '''
                     <form method="post">
                         <a href="/acl/TEST#exp">(''' + get_lang(conn, 'reference') + ''')</a>

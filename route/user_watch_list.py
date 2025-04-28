@@ -44,7 +44,7 @@ async def user_watch_list(tool):
         div += '<a href="/manager/' + ('13' if tool == 'watch_list' else '16') + '">(' + get_lang(conn, 'add') + ')</a>'
 
         return easy_minify(conn, flask.render_template(skin_check(conn),
-            imp = [title_name, wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+            imp = [title_name, await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
             data = div,
             menu = [['user', get_lang(conn, 'return')]]
         ))

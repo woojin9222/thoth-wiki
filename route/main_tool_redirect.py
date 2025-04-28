@@ -58,7 +58,7 @@ async def main_tool_redirect(num = 1, add_2 = ''):
                     ''
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [title_list[num][2], wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+                imp = [title_list[num][2], await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
                 data = '''
                     <form method="post">
                         ''' + top_plus + '''

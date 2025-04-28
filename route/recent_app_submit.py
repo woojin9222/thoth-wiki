@@ -87,7 +87,7 @@ async def recent_app_submit():
                 div += get_lang(conn, 'no_applications_now')
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'application_list'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'application_list'), await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
                 data = div,
                 menu = [['other', get_lang(conn, 'return')]]
             ))

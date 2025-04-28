@@ -160,7 +160,7 @@ async def list_history(tool = 'history', num = 1, set_type = 'normal', doc_name 
                 data_html += get_next_page_bottom(conn, f'/recent_change/{{}}/{set_type}', num, data)
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [title, wiki_set(conn), await wiki_custom(conn), wiki_css([sub, 0])],
+                imp = [title, await wiki_set(), await wiki_custom(conn), wiki_css([sub, 0])],
                 data = data_html,
                 menu = menu
             ))

@@ -36,7 +36,7 @@ async def user_setting_user_name(user_name = ''):
                     user_name = db_data[0][0]
 
                 return easy_minify(conn, flask.render_template(skin_check(conn),
-                    imp = [get_lang(conn, 'change_user_name'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+                    imp = [get_lang(conn, 'change_user_name'), await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
                     data = '''
                         <form method="post">
                             <input name="new_user_name" placeholder="''' + get_lang(conn, 'user_name') + '''" value="''' + html.escape(user_name) + '''">

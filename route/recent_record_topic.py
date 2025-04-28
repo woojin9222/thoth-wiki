@@ -37,10 +37,10 @@ async def recent_record_topic(name = 'Test'):
             ''
 
         div += '</table>'
-        div += next_fix(conn, '/record/topic/' + url_pas(name) + '?num=', num, data_list)
+        div += get_next_page_bottom(conn, '/record/topic/' + url_pas(name) + '?num={}', num, data_list)
 
         return easy_minify(conn, flask.render_template(skin_check(conn),
-            imp = [get_lang(conn, 'discussion_record'), wiki_set(conn), await wiki_custom(conn), wiki_css([sub, 0])],
+            imp = [get_lang(conn, 'discussion_record'), await wiki_set(), await wiki_custom(conn), wiki_css([sub, 0])],
             data = div,
             menu = [['other', get_lang(conn, 'other')], ['user/' + url_pas(name), get_lang(conn, 'user_tool')]]
         ))

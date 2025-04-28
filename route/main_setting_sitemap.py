@@ -95,7 +95,7 @@ async def main_setting_sitemap(do_type = 0):
                 return ''
         else:
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'sitemap_manual_create'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'sitemap_manual_create'), await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
                 data = '''
                     <form method="post">
                         <button id="opennamu_save_button" type="submit">''' + get_lang(conn, 'create') + '''</button>

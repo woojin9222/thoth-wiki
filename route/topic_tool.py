@@ -77,7 +77,7 @@ async def topic_tool(topic_num = 1):
             '''
 
         return easy_minify(conn, flask.render_template(skin_check(conn),
-            imp = [get_lang(conn, 'topic_tool'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+            imp = [get_lang(conn, 'topic_tool'), await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
             data = data,
             menu = [['thread/' + topic_num, get_lang(conn, 'return')]]
         ))

@@ -98,7 +98,7 @@ async def main_setting_head(num, skin_name = '', set_preview = 0):
                 sub_plus = ''
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, data = 'main' + title, safe = 1), wiki_set(conn), await wiki_custom(conn), wiki_css(['(HTML)' + sub_plus, 0])],
+                imp = [get_lang(conn, data = 'main' + title, safe = 1), await wiki_set(), await wiki_custom(conn), wiki_css(['(HTML)' + sub_plus, 0])],
                 data = '''
                     <form method="post">
                         ''' + start + '''

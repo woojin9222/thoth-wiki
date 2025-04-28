@@ -37,7 +37,7 @@ async def main_setting_robot():
             return redirect(conn, '/setting/robot')
         else:
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = ['robots.txt', wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+                imp = ['robots.txt', await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
                 data = '''
                     <a href="/robots.txt">(''' + get_lang(conn, 'view') + ''')</a>
                     <hr class="main_hr">

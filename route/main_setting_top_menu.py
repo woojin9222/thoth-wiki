@@ -23,7 +23,7 @@ async def main_setting_top_menu():
             db_data = db_data[0][0] if db_data else ''
             
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'top_menu_setting'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'top_menu_setting'), await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
                 data = '''
                     <span>
                         EX)

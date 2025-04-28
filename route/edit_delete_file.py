@@ -31,7 +31,7 @@ async def edit_delete_file(name = 'test.jpg'):
             return redirect(conn, '/w/' + url_pas(name))
         else:
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [name, wiki_set(conn), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'file_delete') + ')', 0])],
+                imp = [name, await wiki_set(), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'file_delete') + ')', 0])],
                 data = '''
                     <form method="post">
                         <img src="/image/''' + url_pas(file_all_name) + '''">

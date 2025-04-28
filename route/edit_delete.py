@@ -54,7 +54,7 @@ async def edit_delete(name):
             return redirect(conn, '/w/' + url_pas(name))
         else:            
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [name, wiki_set(conn), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'delete') + ')', 0])],
+                imp = [name, await wiki_set(), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'delete') + ')', 0])],
                 data = '''
                     <form method="post">
                         <input placeholder="''' + get_lang(conn, 'why') + '''" name="send">

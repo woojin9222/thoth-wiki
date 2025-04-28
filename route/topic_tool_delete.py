@@ -18,7 +18,7 @@ async def topic_tool_delete(topic_num = 1):
             return redirect(conn, '/')
         else:
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'topic_delete'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'topic_delete'), await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
                 data = '''
                     <form method="post">
                         <span>''' + get_lang(conn, 'delete_warning') + '''</span>
