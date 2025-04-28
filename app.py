@@ -974,7 +974,7 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_for = 1, x_proto = 1)
 
 if __name__ == "__main__":
     if run_mode in ('dev'):
-        app.run(host = server_set['host'], port = int(server_set['port']))
+        app.run(host = server_set['host'], port = int(server_set['port']), use_reloader = False)
     else:
         config = Config()
         config.bind = [server_set['host'] + ":" + server_set['port']]

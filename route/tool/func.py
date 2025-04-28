@@ -1289,7 +1289,6 @@ async def wiki_set():
     other_set = {}
 
     data = await python_to_golang('api_func_wiki_set', other_set)
-    print(data)
 
     return data["data"]
 
