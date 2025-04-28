@@ -54,7 +54,7 @@ async def bbs_w_delete(bbs_num = '', post_num = '', comment_num = ''):
                 sub += ' (' + comment_num + ')'
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [name, wiki_set(conn), await wiki_custom(conn), wiki_css([sub, 0])],
+                imp = [name, await wiki_set(), await wiki_custom(conn), wiki_css([sub, 0])],
                 data = render_simple_set(conn, '''
                     <form method="post">
                         <span>''' + get_lang(conn, 'delete_warning') + '''</span>

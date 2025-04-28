@@ -101,7 +101,7 @@ async def give_admin_groups(name = 'test'):
                     choice = for_a[2]
 
                 data += '' + \
-                    '<li class="opennamu_list_1" style="margin-left: ' + str(int(for_a[0]) * 20) + 'px;">' + \
+                    '<li class="opennamu_list_1" style="margin-left: ' + str((int(for_a[0]) - 1) * 20) + 'px;">' + \
                         choice + \
                     '</li>'
                 ''
@@ -109,7 +109,7 @@ async def give_admin_groups(name = 'test'):
             data += '</ul>'
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [name, wiki_set(conn), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'admin_group') + ')', 0])],
+                imp = [name, await wiki_set(), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'admin_group') + ')', 0])],
                 data = '''
                     <form method="post">
                         ''' + data + '''

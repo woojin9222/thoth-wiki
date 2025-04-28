@@ -66,7 +66,7 @@ async def main_setting_external():
                     re_ver += '<option value="' + i + '">' + re_ver_list[i] + '</option>'
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'ext_api_req_set'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'ext_api_req_set'), await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
                 data = render_simple_set(conn, '''
                     <form method="post">
                         <h2>''' + get_lang(conn, 'captcha') + '''</h2>

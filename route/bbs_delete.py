@@ -27,7 +27,7 @@ async def bbs_delete(bbs_num = ''):
             return redirect(conn, '/bbs/main')
         else:
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'bbs_delete'), wiki_set(conn), await wiki_custom(conn), wiki_css(['(' + bbs_name + ')', 0])],
+                imp = [get_lang(conn, 'bbs_delete'), await wiki_set(), await wiki_custom(conn), wiki_css(['(' + bbs_name + ')', 0])],
                 data = render_simple_set(conn, '''
                     <form method="post">
                         <span>''' + get_lang(conn, 'delete_warning') + '''</span>

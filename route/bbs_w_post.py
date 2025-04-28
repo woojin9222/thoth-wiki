@@ -210,7 +210,7 @@ async def bbs_w_post(bbs_num = '', post_num = ''):
                 '''
 
                 return easy_minify(conn, flask.render_template(skin_check(conn),
-                    imp = [bbs_name, wiki_set(conn), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'bbs') + ')', 0])],
+                    imp = [bbs_name, await wiki_set(), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'bbs') + ')', 0])],
                     data = data,
                     menu = [['bbs/in/' + bbs_num_str, get_lang(conn, 'return')], ['bbs/edit/' + bbs_num_str + '/' + post_num_str, get_lang(conn, 'edit')], ['bbs/tool/' + bbs_num_str + '/' + post_num_str, get_lang(conn, 'tool')]]
                 ))

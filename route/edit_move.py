@@ -214,7 +214,7 @@ async def edit_move(name):
             owner_auth = 1 if owner_auth == 0 else 0
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [name, wiki_set(conn), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'move') + ')', 0])],
+                imp = [name, await wiki_set(), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'move') + ')', 0])],
                 data = '''
                     <form method="post">
                         <span>''' + get_lang(conn, 'document_name') + '''</span>

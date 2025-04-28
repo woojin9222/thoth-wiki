@@ -53,7 +53,7 @@ async def vote_add():
             acl_data += '</select>'
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'add_vote'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'add_vote'), await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
                 data = '' + \
                     '<form method="post">' + \
                         '<input name="name" placeholder="' + get_lang(conn, 'name') + '">' + \

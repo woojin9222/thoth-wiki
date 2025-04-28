@@ -146,8 +146,8 @@ async def list_user_check(name = 'test', plus_name = None, arg_num = 1, do_type 
                     record
                 )
             else:
-                div += next_fix(conn, 
-                    '/list/user/check/' + url_pas(name) + '/normal/', 
+                div += get_next_page_bottom(conn, 
+                    '/list/user/check/' + url_pas(name) + '/normal/{}', 
                     num, 
                     record
                 )
@@ -156,7 +156,7 @@ async def list_user_check(name = 'test', plus_name = None, arg_num = 1, do_type 
                 name += ', ' + plus_id
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [name, wiki_set(conn), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'check') + ')', 0])],
+                imp = [name, await wiki_set(), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'check') + ')', 0])],
                 data = div,
                 menu = [['manager', get_lang(conn, 'return')]]
             ))
@@ -174,8 +174,8 @@ async def list_user_check(name = 'test', plus_name = None, arg_num = 1, do_type 
 
             if div != '':
                 div = '<ul>' + div + '</ul>'
-                div += next_fix(conn, 
-                    '/list/user/check/' + url_pas(name) + '/' + check_type + '/', 
+                div += get_next_page_bottom(conn, 
+                    '/list/user/check/' + url_pas(name) + '/' + check_type + '/{}', 
                     num, 
                     record
                 )
@@ -185,7 +185,7 @@ async def list_user_check(name = 'test', plus_name = None, arg_num = 1, do_type 
             '' + div
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [name, wiki_set(conn), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'simple_check') + ')', 0])],
+                imp = [name, await wiki_set(), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'simple_check') + ')', 0])],
                 data = div,
                 menu = [['check/' + url_pas(name), get_lang(conn, 'return')]]
             ))

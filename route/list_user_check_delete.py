@@ -18,7 +18,7 @@ async def list_user_check_delete(name = None, ip = None, time = None, do_type = 
                 return redirect(conn, '/list/user/check/' + url_pas(user_id if return_type == '0' else user_ip))
             else:
                 return easy_minify(conn, flask.render_template(skin_check(conn),
-                    imp = [get_lang(conn, 'check'), wiki_set(conn), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'delete') + ')', 0])],
+                    imp = [get_lang(conn, 'check'), await wiki_set(), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'delete') + ')', 0])],
                     data = '''
                         ''' + get_lang(conn, 'name') + ''' : ''' + user_id + '''
                         <hr class="main_hr">

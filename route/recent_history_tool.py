@@ -43,7 +43,7 @@ async def recent_history_tool(name = 'Test', rev = 1):
             data += '</ul>'
 
         return easy_minify(conn, flask.render_template(skin_check(conn),
-            imp = [name, wiki_set(conn), await wiki_custom(conn), wiki_css(['(r' + num + ')', 0])],
+            imp = [name, await wiki_set(), await wiki_custom(conn), wiki_css(['(r' + num + ')', 0])],
             data = data,
             menu = [['history/' + url_pas(name), get_lang(conn, 'return')]]
         ))

@@ -355,7 +355,7 @@ async def view_w(name = 'Test', do_type = ''):
         menu += [['doc_watch_list/1/' + url_pas(name), get_lang(conn, 'watchlist')]]
 
         return easy_minify(conn, flask.render_template(skin_check(conn),
-            imp = [name_view, wiki_set(conn), await wiki_custom(conn), wiki_css([sub, r_date, watch_list, description, view_count])],
+            imp = [name_view, await wiki_set(), await wiki_custom(conn), wiki_css([sub, r_date, watch_list, description, view_count])],
             data = div,
             menu = menu
         )), response_data

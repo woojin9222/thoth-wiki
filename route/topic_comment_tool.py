@@ -56,7 +56,7 @@ async def topic_comment_tool(topic_num = 1, num = 1):
             '''
 
         return easy_minify(conn, flask.render_template(skin_check(conn),
-            imp = [get_lang(conn, 'discussion_tool'), wiki_set(conn), await wiki_custom(conn), wiki_css(['(#' + num + ')', 0])],
+            imp = [get_lang(conn, 'discussion_tool'), await wiki_set(), await wiki_custom(conn), wiki_css(['(#' + num + ')', 0])],
             data = ban,
             menu = [['thread/' + topic_num + '#' + num, get_lang(conn, 'return')]]
         ))

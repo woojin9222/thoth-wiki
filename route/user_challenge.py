@@ -252,7 +252,7 @@ async def user_challenge():
             data_html = data_html_green + data_html_red
             
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'challenge_and_level_manage'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'challenge_and_level_manage'), await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
                 data = data_html + '''
                     <form method="post">
                         <div id="opennamu_get_user_info">''' + html.escape(ip) + '''</div>

@@ -57,7 +57,7 @@ async def main_setting_sitemap_set():
                     for_a += 1
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'sitemap_management'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'sitemap_management'), await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
                 data = '''
                     ''' + sitemap_list + '''
                     <hr class="main_hr">

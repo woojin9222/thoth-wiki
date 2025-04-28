@@ -40,7 +40,7 @@ async def main_setting_skin_set():
             set_data_main = { for_b : '' for for_b in set_list }
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'main_skin_set_default'), wiki_set(conn), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'beta') + ')', 0])],
+                imp = [get_lang(conn, 'main_skin_set_default'), await wiki_set(), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'beta') + ')', 0])],
                 data = render_simple_set(conn, '''
                     <form method="post">
                         <h2>''' + get_lang(conn, "render") + '''</h2>

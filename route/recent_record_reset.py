@@ -15,7 +15,7 @@ async def recent_record_reset(name = 'Test'):
             return redirect(conn, '/record/' + url_pas(name))
         else:
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [name, wiki_set(conn), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'record_reset') + ')', 0])],
+                imp = [name, await wiki_set(), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'record_reset') + ')', 0])],
                 data = '''
                     <form method="post">
                         <span>''' + get_lang(conn, 'delete_warning') + '''</span>

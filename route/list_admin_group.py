@@ -28,7 +28,7 @@ async def list_admin_group():
         ''
 
         return easy_minify(conn, flask.render_template(skin_check(conn),
-            imp = [get_lang(conn, 'admin_group_list'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+            imp = [get_lang(conn, 'admin_group_list'), await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
             data = list_data,
             menu = [['manager', get_lang(conn, 'return')]]
         ))

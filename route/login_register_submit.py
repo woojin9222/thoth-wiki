@@ -53,7 +53,7 @@ async def login_register_submit():
             return await re_error(conn, 43)
         else:
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'approval_question'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'approval_question'), await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
                 data = '''
                     <form method="post">
                         ''' + get_lang(conn, 'approval_question') + ' : ' + data_que + '''

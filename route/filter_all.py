@@ -88,7 +88,7 @@ async def filter_all(tool):
             div += '<a href="/filter/' + tool + '/add">(' + get_lang(conn, 'add') + ')</a>'
 
         return easy_minify(conn, flask.render_template(skin_check(conn),
-            imp = [title, wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+            imp = [title, await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
             data = div,
             menu = [['manager/1', get_lang(conn, 'return')]]
         ))

@@ -26,7 +26,7 @@ async def login_register_email():
             if sql_d and sql_d[0][0] != '':
                 t_text = html.escape(sql_d[0][0])
             else:
-                t_text = wiki_set(conn)[0] + ' key'
+                t_text = (await wiki_set())[0] + ' key'
 
             curs.execute(db_change('select data from other where name = "email_text"'))
             sql_d = curs.fetchall()
@@ -40,7 +40,7 @@ async def login_register_email():
             if curs.fetchall():
                 return await re_error(conn, 35)
 
-            if send_email(conn, user_email, t_text, i_text) == 0:
+            if await send_email(conn, user_email, t_text, i_text) == 0:
                 return await re_error(conn, 18)
 
             flask.session['reg_email'] = user_email
@@ -52,7 +52,7 @@ async def login_register_email():
             b_text = (sql_d[0][0] + '<hr class="main_hr">') if sql_d and sql_d[0][0] != '' else ''
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'email'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'email'), await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
                 data = '''
                     <a href="/filter/email_filter">(''' + get_lang(conn, 'email_filter_list') + ''')</a>
                     <hr class="main_hr">

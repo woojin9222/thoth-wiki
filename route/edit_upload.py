@@ -136,7 +136,7 @@ async def edit_upload():
             upload_default = html.escape(db_data[0][0]) if db_data and db_data[0][0] != '' else ''
             
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'upload'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'upload'), await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
                 data = '''
                     <a href="/filter/file_filter">(''' + get_lang(conn, 'file_filter_list') + ''')</a> <a href="/filter/extension_filter">(''' + get_lang(conn, 'extension_filter_list') + ''')</a>
                     ''' + upload_help + '''

@@ -60,7 +60,7 @@ async def user_setting_pw():
                 password_min_length = ''
             
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'password_change'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'password_change'), await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
                 data = '''
                     <form method="post">
                         <input placeholder="''' + get_lang(conn, 'now_password') + '''" name="password_now" type="password">

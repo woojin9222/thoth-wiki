@@ -93,7 +93,7 @@ async def view_diff(name = 'Test', num_a = 1, num_b = 1):
             result = view_diff_do(first_raw_data, second_raw_data, 'r' + first, 'r' + second)
 
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [name, wiki_set(conn), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'compare') + ')', 0])],
+                imp = [name, await wiki_set(), await wiki_custom(conn), wiki_css(['(' + get_lang(conn, 'compare') + ')', 0])],
                 data = result,
                 menu = [['history/' + url_pas(name), get_lang(conn, 'return')]]
             ))

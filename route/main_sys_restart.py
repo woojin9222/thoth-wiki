@@ -48,7 +48,7 @@ async def main_sys_restart(golang_process):
             return flask.Response(get_lang(conn, "warning_restart"), status = 200)
         else:
             return easy_minify(conn, flask.render_template(skin_check(conn),
-                imp = [get_lang(conn, 'wiki_restart'), wiki_set(conn), await wiki_custom(conn), wiki_css([0, 0])],
+                imp = [get_lang(conn, 'wiki_restart'), await wiki_set(), await wiki_custom(conn), wiki_css([0, 0])],
                 data = '''
                     <form method="post">
                         <button type="submit">''' + get_lang(conn, 'restart') + '''</button>

@@ -31,12 +31,12 @@ async def vote_list(list_type = 'normal', num = 1):
         menu = []
         if list_type == 'normal':
             menu = [["vote/add", get_lang(conn, 'add_vote')]] if await acl_check('', 'vote') != 1 else []
-            data += next_fix(conn, '/vote/list/', num, data_list)
+            data += get_next_page_bottom(conn, '/vote/list/{}', num, data_list)
         else:
-            data += next_fix(conn, '/vote/list/close/', num, data_list)
+            data += get_next_page_bottom(conn, '/vote/list/close/{}', num, data_list)
 
         return easy_minify(conn, flask.render_template(skin_check(conn),
-            imp = [get_lang(conn, 'vote_list'), wiki_set(conn), await wiki_custom(conn), wiki_css([sub, 0])],
+            imp = [get_lang(conn, 'vote_list'), await wiki_set(), await wiki_custom(conn), wiki_css([sub, 0])],
             data = data,
             menu = [['other', get_lang(conn, 'return')]] + menu
         ))
