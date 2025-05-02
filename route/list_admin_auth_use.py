@@ -30,7 +30,7 @@ async def list_admin_auth_use(arg_num = 1, arg_search = 'normal'):
                     
                     if ip_view != '':
                         do_data = do_data.split(' ')
-                        do_data = do_data[0] if do_data[0] in ('ban') else data[1]
+                        do_data = do_data[0] if do_data[0] in ['ban'] else data[1]
 
                 list_data += '<li>' + await ip_pas(data[0]) + ' | ' + html.escape(do_data) + ' | ' + data[2] + '</li>'
 
